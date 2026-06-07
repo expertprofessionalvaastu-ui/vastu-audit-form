@@ -87,13 +87,14 @@ function App() {
           <li><a href="#about">About</a></li>
           <li><a href="#approach">Approach</a></li>
           <li><a href="#services">Services</a></li>
-          <li><a href="#booking-form">Consult</a></li>
+          <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
 
-      <section className="hero">
+      {/* UPDATED HERO SECTION WITH FORM SIDE-BY-SIDE */}
+      <section className="hero" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: '140px 5% 80px', gap: '40px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
         <div className="hero-bg"></div>
-        <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', right: '-15%', top: '50%', transform: 'translateY(-50%)', opacity: 0.25, zIndex: 0, width: '800px', height: '800px', pointerEvents: 'none' }}>
           <circle cx="200" cy="200" r="190" stroke="#C9A84C" strokeWidth="0.5"/>
           <circle cx="200" cy="200" r="150" stroke="#C9A84C" strokeWidth="0.5"/>
           <circle cx="200" cy="200" r="100" stroke="#C9A84C" strokeWidth="0.5"/>
@@ -106,57 +107,54 @@ function App() {
           <polygon points="200,390 210,210 200,200 190,210" fill="#C9A84C"/>
           <polygon points="10,200 190,190 200,200 190,210" fill="#C9A84C"/>
           <polygon points="390,200 210,190 200,200 210,210" fill="#C9A84C"/>
-          <text x="200" y="30" textAnchor="middle" fill="#C9A84C" fontSize="14">N</text>
-          <text x="200" y="385" textAnchor="middle" fill="#C9A84C" fontSize="14">S</text>
-          <text x="385" y="205" textAnchor="middle" fill="#C9A84C" fontSize="14">E</text>
-          <text x="15" y="205" textAnchor="middle" fill="#C9A84C" fontSize="14">W</text>
         </svg>
-        <div className="hero-content">
+
+        {/* Left Side: Brand Content */}
+        <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
           <div className="hero-tag">Dhanbad, Jharkhand · Consulting</div>
           <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
           <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
-          <div className="hero-divider"></div>
-          <p className="hero-desc">Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
-          <div className="hero-cta">
-            <a href="#booking-form" className="btn-primary">Book Consultation</a>
-            <a href="#approach" className="btn-secondary">Our Approach</a>
+          <div className="hero-divider" style={{ margin: '20px 0' }}></div>
+          <p className="hero-desc" style={{ maxWidth: '90%' }}>Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
+          <div className="hero-cta" style={{ justifyContent: 'flex-start', marginTop: '30px' }}>
+            <a href="#approach" className="btn-secondary">Explore Our Approach</a>
           </div>
         </div>
-      </section>
 
-      {/* FORM MOVED TO TOP */}
-      <section id="booking-form" style={{ background: 'var(--dark-2)', padding: '80px 5%' }}>
-        <div className="reveal" style={{ background: 'var(--dark)', border: '1px solid rgba(201,168,76,0.15)', padding: '48px 40px', textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '24px', textAlign: 'center' }}>Schedule a Session</div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '32px', letterSpacing: '1px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
-          
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Aapka Naam</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Naam likhein" className="form-input" required />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Phone Number</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Aapka number" className="form-input" required />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Service</label>
-              <select name="service" value={formData.service} onChange={handleChange} className="form-input" required>
-                <option>Residential Vastu</option>
-                <option>Commercial Vastu</option>
-                <option>KP Astrology Reading</option>
-                <option>Astro-Vastu Combined</option>
-                <option>Online Consultation</option>
-              </select>
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Upload Floor Plan (Map)</label>
-              <input type="file" onChange={handleFileChange} className="form-input" required />
-            </div>
-            <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '8px', width: '100%' }}>
-              {isSubmitting ? 'Submitting...' : 'Consultation Book Karein'}
-            </button>
-          </form>
+        {/* Right Side: The Premium Form */}
+        <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
+          <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
+            <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Schedule a Session</div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
+            
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Aapka Naam</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Naam likhein" className="form-input" style={{ padding: '12px', fontSize: '0.9rem' }} required />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone Number</label>
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Aapka number" className="form-input" style={{ padding: '12px', fontSize: '0.9rem' }} required />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
+                <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={{ padding: '12px', fontSize: '0.9rem' }} required>
+                  <option>Residential Vastu</option>
+                  <option>Commercial Vastu</option>
+                  <option>KP Astrology Reading</option>
+                  <option>Astro-Vastu Combined</option>
+                  <option>Online Consultation</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Upload Floor Plan (Map)</label>
+                <input type="file" onChange={handleFileChange} className="form-input" style={{ padding: '10px', fontSize: '0.85rem' }} required />
+              </div>
+              <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '10px', width: '100%', padding: '14px', fontSize: '0.9rem', letterSpacing: '2px' }}>
+                {isSubmitting ? 'Submitting...' : 'Book Consultation'}
+              </button>
+            </form>
+          </div>
         </div>
       </section>
 
@@ -273,35 +271,6 @@ function App() {
               <li>Written Report Provided</li>
               <li>Available Pan India</li>
             </ul>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
-          <div className="section-tag reveal">Why Choose</div>
-          <h2 className="section-title reveal">The Inner Core <em>Difference</em></h2>
-        </div>
-        <div className="why-grid">
-          <div className="why-card reveal">
-            <span className="why-icon">📊</span>
-            <div className="why-title">Evidence Based</div>
-            <p className="why-desc">Every recommendation comes with a logical explanation. No guesswork, no blind rituals.</p>
-          </div>
-          <div className="why-card reveal">
-            <span className="why-icon">🎯</span>
-            <div className="why-title">Results First</div>
-            <p className="why-desc">The focus is always on practical, actionable outcomes — not lengthy theoretical sessions.</p>
-          </div>
-          <div className="why-card reveal">
-            <span className="why-icon">🤝</span>
-            <div className="why-title">Honest Guidance</div>
-            <p className="why-desc">No fake promises, no fear tactics. Just clear, honest analysis of your situation.</p>
-          </div>
-          <div className="why-card reveal">
-            <span className="why-icon">🧠</span>
-            <div className="why-title">Dual Expertise</div>
-            <p className="why-desc">Both KP Astrology and Vastu Shastra — offering a 360° view of your life and space.</p>
           </div>
         </div>
       </section>
