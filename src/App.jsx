@@ -5,6 +5,10 @@ function App() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    email: '',
+    district: '',
+    state: '',
+    country: '',
     service: 'Residential Vastu'
   });
   const [mapFile, setMapFile] = useState(null);
@@ -43,24 +47,31 @@ function App() {
     try {
       const fileExt = mapFile.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
+      
+      // Uploading map to 'house_maps' bucket
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('maps')
+        .from('house_maps')
         .upload(fileName, mapFile);
         
       if (uploadError) throw uploadError;
 
       const { data: publicUrlData } = supabase.storage
-        .from('maps')
+        .from('house_maps')
         .getPublicUrl(fileName);
         
       const fileUrl = publicUrlData.publicUrl;
 
+      // Inserting data into 'leads' table (Corrected table name)
       const { error: dbError } = await supabase
-        .from('consultations')
+        .from('leads')
         .insert([
           { 
             name: formData.name, 
             phone: formData.phone, 
+            email: formData.email,
+            district: formData.district,
+            state: formData.state,
+            country: formData.country,
             service: formData.service,
             map_url: fileUrl 
           }
@@ -69,8 +80,12 @@ function App() {
       if (dbError) throw dbError;
 
       alert('Request bhej di gayi! Hum jald hi aapse sampark karenge.');
-      setFormData({ name: '', phone: '', service: 'Residential Vastu' });
+      
+      setFormData({ 
+        name: '', phone: '', email: '', district: '', state: '', country: '', service: 'Residential Vastu' 
+      });
       setMapFile(null);
+      e.target.reset();
       
     } catch (error) {
       alert('Error: ' + error.message);
@@ -91,7 +106,6 @@ function App() {
         </ul>
       </nav>
 
-      {/* UPDATED HERO SECTION WITH FORM SIDE-BY-SIDE */}
       <section className="hero" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: '140px 5% 80px', gap: '40px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
         <div className="hero-bg"></div>
         <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', right: '-15%', top: '50%', transform: 'translateY(-50%)', opacity: 0.25, zIndex: 0, width: '800px', height: '800px', pointerEvents: 'none' }}>
@@ -109,7 +123,6 @@ function App() {
           <polygon points="390,200 210,190 200,200 210,210" fill="#C9A84C"/>
         </svg>
 
-        {/* Left Side: Brand Content */}
         <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
           <div className="hero-tag">Dhanbad, Jharkhand · Consulting</div>
           <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
@@ -121,24 +134,47 @@ function App() {
           </div>
         </div>
 
-        {/* Right Side: The Premium Form */}
         <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
           <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
             <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Schedule a Session</div>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
             
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Aapka Naam</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Naam likhein" className="form-input" style={{ padding: '12px', fontSize: '0.9rem' }} required />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
               </div>
+              
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label>
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Number" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email ID" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label>
+                  <input type="text" name="district" value={formData.district} onChange={handleChange} placeholder="District" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label>
+                  <input type="text" name="state" value={formData.state} onChange={handleChange} placeholder="State" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
+                </div>
+              </div>
+
               <div>
-                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone Number</label>
-                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Aapka number" className="form-input" style={{ padding: '12px', fontSize: '0.9rem' }} required />
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label>
+                <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder="Country" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
               </div>
+
               <div>
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
-                <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={{ padding: '12px', fontSize: '0.9rem' }} required>
+                <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required>
                   <option>Residential Vastu</option>
                   <option>Commercial Vastu</option>
                   <option>KP Astrology Reading</option>
@@ -146,11 +182,13 @@ function App() {
                   <option>Online Consultation</option>
                 </select>
               </div>
+
               <div>
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Upload Floor Plan (Map)</label>
-                <input type="file" onChange={handleFileChange} className="form-input" style={{ padding: '10px', fontSize: '0.85rem' }} required />
+                <input type="file" onChange={handleFileChange} className="form-input" style={{ padding: '8px', fontSize: '0.8rem' }} required />
               </div>
-              <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '10px', width: '100%', padding: '14px', fontSize: '0.9rem', letterSpacing: '2px' }}>
+
+              <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '4px', width: '100%', padding: '12px', fontSize: '0.9rem', letterSpacing: '2px' }}>
                 {isSubmitting ? 'Submitting...' : 'Book Consultation'}
               </button>
             </form>
