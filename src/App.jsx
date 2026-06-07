@@ -1,18 +1,28 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-import './App.css';
 
 function App() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    email: '',
-    district: '',
-    state: ''
+    service: 'Residential Vastu'
   });
-  
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Scroll Animation Logic
+  useEffect(() => {
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,136 +34,380 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!mapFile) {
+      alert("Please upload your Floor Plan.");
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      let mapUrl = '';
+      // 1. Upload File to Supabase Storage
+      const fileExt = mapFile.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('maps')
+        .upload(fileName, mapFile);
+        
+      if (uploadError) throw uploadError;
 
-      if (mapFile) {
-        const fileExt = mapFile.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+      // 2. Get Public URL of the uploaded file
+      const { data: publicUrlData } = supabase.storage
+        .from('maps')
+        .getPublicUrl(fileName);
+        
+      const fileUrl = publicUrlData.publicUrl;
 
-        const { error: uploadError } = await supabase.storage
-          .from('house_maps')
-          .upload(fileName, mapFile);
-
-        if (uploadError) {
-          throw new Error("फाइल अपलोड करने में समस्या आई: " + uploadError.message);
-        }
-
-        const { data } = supabase.storage
-          .from('house_maps')
-          .getPublicUrl(fileName);
-
-        mapUrl = data.publicUrl;
-      }
-
-      const { error: insertError } = await supabase
-        .from('leads')
+      // 3. Save Data to Database
+      const { error: dbError } = await supabase
+        .from('consultations')
         .insert([
-          {
-            name: formData.name,
-            phone: formData.phone,
-            email: formData.email,
-            district: formData.district,
-            state: formData.state,
-            map_url: mapUrl
+          { 
+            name: formData.name, 
+            phone: formData.phone, 
+            service: formData.service,
+            map_url: fileUrl 
           }
         ]);
 
-      if (insertError) {
-        throw new Error("डेटा सेव करने में समस्या आई: " + insertError.message);
-      }
+      if (dbError) throw dbError;
 
-      alert("बधाई हो! 🎉 आपका फॉर्म सफलतापूर्वक सबमिट हो गया है!");
-      
-      setFormData({ name: '', phone: '', email: '', district: '', state: '' });
+      alert('Request bhej di gayi! Hum jald hi aapse sampark karenge.');
+      setFormData({ name: '', phone: '', service: 'Residential Vastu' });
       setMapFile(null);
-      e.target.reset();
-
+      
     } catch (error) {
-      console.error("Error:", error);
-      alert(error.message);
+      alert('Error: ' + error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f4f7f6', padding: '20px', fontFamily: '"Inter", "Segoe UI", sans-serif' }}>
-      
-      <div style={{ width: '100%', maxWidth: '650px', backgroundColor: '#ffffff', padding: '40px', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}>
+    <>
+      <nav>
+        <div className="nav-logo">The Inner Core</div>
+        <ul className="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#approach">Approach</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Consult</a></li>
+        </ul>
+      </nav>
 
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <h2 style={{ color: '#1e293b', fontSize: '28px', fontWeight: '800', margin: '0 0 8px 0', letterSpacing: '-0.5px' }}>
-            Vastu Audit Form
-          </h2>
-          <p style={{ color: '#64748b', fontSize: '14px', margin: '0', lineHeight: '1.5' }}>
-            Please fill in your details for the Vastu and interior audit of your space.
-          </p>
-          <div style={{ width: '40px', height: '4px', backgroundColor: '#3b82f6', margin: '16px auto 0', borderRadius: '2px' }}></div>
+      <section className="hero">
+        <div className="hero-bg"></div>
+        <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="200" cy="200" r="190" stroke="#C9A84C" strokeWidth="0.5"/>
+          <circle cx="200" cy="200" r="150" stroke="#C9A84C" strokeWidth="0.5"/>
+          <circle cx="200" cy="200" r="100" stroke="#C9A84C" strokeWidth="0.5"/>
+          <circle cx="200" cy="200" r="50" stroke="#C9A84C" strokeWidth="0.5"/>
+          <line x1="200" y1="10" x2="200" y2="390" stroke="#C9A84C" strokeWidth="0.5"/>
+          <line x1="10" y1="200" x2="390" y2="200" stroke="#C9A84C" strokeWidth="0.5"/>
+          <line x1="55" y1="55" x2="345" y2="345" stroke="#C9A84C" strokeWidth="0.5"/>
+          <line x1="345" y1="55" x2="55" y2="345" stroke="#C9A84C" strokeWidth="0.5"/>
+          <polygon points="200,10 210,190 200,200 190,190" fill="#C9A84C"/>
+          <polygon points="200,390 210,210 200,200 190,210" fill="#C9A84C"/>
+          <polygon points="10,200 190,190 200,200 190,210" fill="#C9A84C"/>
+          <polygon points="390,200 210,190 200,200 210,210" fill="#C9A84C"/>
+          <text x="200" y="30" textAnchor="middle" fill="#C9A84C" fontSize="14">N</text>
+          <text x="200" y="385" textAnchor="middle" fill="#C9A84C" fontSize="14">S</text>
+          <text x="385" y="205" textAnchor="middle" fill="#C9A84C" fontSize="14">E</text>
+          <text x="15" y="205" textAnchor="middle" fill="#C9A84C" fontSize="14">W</text>
+        </svg>
+        <div className="hero-content">
+          <div className="hero-tag">Dhanbad, Jharkhand · Consulting</div>
+          <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
+          <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
+          <div className="hero-divider"></div>
+          <p className="hero-desc">Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
+          <div className="hero-cta">
+            <a href="#contact" className="btn-primary">Book Consultation</a>
+            <a href="#approach" className="btn-secondary">Our Approach</a>
+          </div>
         </div>
+      </section>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          
-          {/* ... (इनपुट फील्ड्स वही रहेंगी) ... */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <label style={{ display: 'block', fontWeight: '600', color: '#334155', fontSize: '14px', flex: '0 0 200px', textAlign: 'left' }}>Full Name</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="e.g., Rahul Sharma" style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }} />
-          </div>
+      <div className="philosophy-strip">
+        <div className="philosophy-item"><div className="philosophy-dot"></div>Ancient Wisdom</div>
+        <div className="philosophy-item"><div className="philosophy-dot"></div>Modern Logic</div>
+        <div className="philosophy-item"><div className="philosophy-dot"></div>Data & Evidence</div>
+        <div className="philosophy-item"><div className="philosophy-dot"></div>Real Results</div>
+        <div className="philosophy-item"><div className="philosophy-dot"></div>No Blind Faith</div>
+      </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <label style={{ display: 'block', fontWeight: '600', color: '#334155', fontSize: '14px', flex: '0 0 200px', textAlign: 'left' }}>Phone Number</label>
-            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="+91" style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }} />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <label style={{ display: 'block', fontWeight: '600', color: '#334155', fontSize: '14px', flex: '0 0 200px', textAlign: 'left' }}>Email ID</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="example@email.com" style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }} />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <label style={{ display: 'block', fontWeight: '600', color: '#334155', fontSize: '14px', flex: '0 0 200px', textAlign: 'left' }}>District & State</label>
-            <div style={{ flex: 1, display: 'flex', gap: '12px' }}>
-              <input type="text" name="district" value={formData.district} onChange={handleChange} required placeholder="District" style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }} />
-              <input type="text" name="state" value={formData.state} onChange={handleChange} required placeholder="State" style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }} />
+      <section className="about" id="about">
+        <div className="about-grid">
+          <div className="about-visual reveal">
+            <div className="about-box">
+              <span className="about-symbol">🔮</span>
+              <div className="about-name">Sandeep Kumar</div>
+              <div className="about-designation">Founder · The Inner Core</div>
+              <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '20px auto' }}></div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '2' }}>
+                KP Astrologer<br/>
+                Vastu Consultant<br/>
+                Digital Creator<br/>
+                Dhanbad, Jharkhand
+              </div>
             </div>
           </div>
+          <div className="about-content reveal">
+            <div className="section-tag">About</div>
+            <h2 className="section-title">Aligning Spaces<br/>with <em>Purpose</em></h2>
+            <div className="gold-divider" style={{ margin: '20px 0 40px' }}></div>
+            <p className="about-text">I am Sandeep Kumar — a Professional Astro-Vastu Consultant based in Dhanbad. My work bridges the gap between ancient Indian sciences and the modern, logical mind.</p>
+            <p className="about-text">I do not believe in blind faith or superstition. Every recommendation I make is backed by classical Vastu Shastra principles, KP Astrology logic, and observable data — so you can understand <em>why</em> a change works, not just that it does.</p>
+            <div className="about-highlight">"Results speak. My job is to decode your space and your stars — and give you practical, verifiable solutions."</div>
+          </div>
+        </div>
+      </section>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <label style={{ display: 'block', fontWeight: '600', color: '#334155', fontSize: '14px', flex: '0 0 200px', textAlign: 'left' }}>Upload To the Scale Map</label>
-            <input type="file" accept="image/*,application/pdf" onChange={handleFileChange} required style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', cursor: 'pointer' }} />
+      <section id="approach">
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="section-tag reveal">Methodology</div>
+          <h2 className="section-title reveal">A Different <em>Approach</em></h2>
+        </div>
+        <div className="approach-grid">
+          <div className="approach-card reveal">
+            <div className="approach-number">01</div>
+            <div className="approach-line"></div>
+            <div className="approach-title">Ancient Shastra</div>
+            <p className="approach-desc">Rooted in classical Vastu Shastra and KP Astrology — systems refined over thousands of years to understand the relationship between space, time, and human life.</p>
+          </div>
+          <div className="approach-card reveal">
+            <div className="approach-number">02</div>
+            <div className="approach-line"></div>
+            <div className="approach-title">Data & Logic</div>
+            <p className="approach-desc">Every analysis is data-driven. I decode your space using directional science, planetary positions, and measurable factors — not vague intuition or guesswork.</p>
+          </div>
+          <div className="approach-card reveal">
+            <div className="approach-number">03</div>
+            <div className="approach-line"></div>
+            <div className="approach-title">Modern Clarity</div>
+            <p className="approach-desc">Solutions are practical and explainable. You will always understand the reason behind every recommendation — making you an informed participant, not just a follower.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="services" id="services">
+        <div className="services-header reveal">
+          <div className="section-tag">Services</div>
+          <h2 className="section-title">How I Can <em>Help You</em></h2>
+        </div>
+        <div className="services-grid">
+          <div className="service-card reveal">
+            <span className="service-icon">🏠</span>
+            <div className="service-title">Vastu Consultation</div>
+            <p className="service-desc">A complete analysis of your home or workspace — identifying energy imbalances and providing practical, cost-effective remedies grounded in classical Vastu principles.</p>
+            <ul className="service-points">
+              <li>Home Vastu Analysis</li>
+              <li>Office & Business Vastu</li>
+              <li>Plot & Construction Guidance</li>
+              <li>Directional Energy Mapping</li>
+              <li>Practical Remedies — No Major Demolition</li>
+            </ul>
+          </div>
+          <div className="service-card reveal">
+            <span className="service-icon">🔮</span>
+            <div className="service-title">KP Astrology Reading</div>
+            <p className="service-desc">Using the precision of Krishnamurti Paddhati (KP) — one of the most accurate astrological methods — to give you clarity on life events, timing, and important decisions.</p>
+            <ul className="service-points">
+              <li>Birth Chart Analysis</li>
+              <li>Event Timing & Prediction</li>
+              <li>Career & Business Guidance</li>
+              <li>Relationship & Family Analysis</li>
+              <li>Muhurat Selection</li>
+            </ul>
+          </div>
+          <div className="service-card reveal">
+            <span className="service-icon">✨</span>
+            <div className="service-title">Astro-Vastu Combined</div>
+            <p className="service-desc">A holistic session combining both disciplines — understanding how your planetary chart influences your space, and how your space can be aligned to support your cosmic energy.</p>
+            <ul className="service-points">
+              <li>Chart + Space Correlation</li>
+              <li>Personalized Remedies</li>
+              <li>Timing-Based Action Plan</li>
+              <li>Follow-up Support</li>
+            </ul>
+          </div>
+          <div className="service-card reveal">
+            <span className="service-icon">📱</span>
+            <div className="service-title">Online Consultation</div>
+            <p className="service-desc">Distance is not a barrier. Get a full consultation via WhatsApp or video call — with detailed analysis shared digitally for your reference anytime.</p>
+            <ul className="service-points">
+              <li>WhatsApp Consultation</li>
+              <li>Video Call Analysis</li>
+              <li>Written Report Provided</li>
+              <li>Available Pan India</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <div className="section-tag reveal">Why Choose</div>
+          <h2 className="section-title reveal">The Inner Core <em>Difference</em></h2>
+        </div>
+        <div className="why-grid">
+          <div className="why-card reveal">
+            <span className="why-icon">📊</span>
+            <div className="why-title">Evidence Based</div>
+            <p className="why-desc">Every recommendation comes with a logical explanation. No guesswork, no blind rituals.</p>
+          </div>
+          <div className="why-card reveal">
+            <span className="why-icon">🎯</span>
+            <div className="why-title">Results First</div>
+            <p className="why-desc">The focus is always on practical, actionable outcomes — not lengthy theoretical sessions.</p>
+          </div>
+          <div className="why-card reveal">
+            <span className="why-icon">🤝</span>
+            <div className="why-title">Honest Guidance</div>
+            <p className="why-desc">No fake promises, no fear tactics. Just clear, honest analysis of your situation.</p>
+          </div>
+          <div className="why-card reveal">
+            <span className="why-icon">🧠</span>
+            <div className="why-title">Dual Expertise</div>
+            <p className="why-desc">Both KP Astrology and Vastu Shastra — offering a 360° view of your life and space.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS SECTION */}
+      <section style={{ background: 'var(--dark-2)', padding: '100px 5%' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="section-tag reveal">How It Works</div>
+          <h2 className="section-title reveal">Transparent <em>Process</em></h2>
+          <div style={{ maxWidth: '700px', margin: '60px auto 0', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+            <div className="reveal" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
+              <div style={{ flexShrink: 0, width: '52px', height: '52px', border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--gold)' }}>1</div>
+              <div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--cream)', marginBottom: '10px' }}>Scaled Floor Plan Bhejein</div>
+                <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: 'var(--text-muted)' }}>Draftsman ya architect se banwaya to-scale floor plan bhejein — saath mein North direction clearly marked hona chahiye. Haath se bana naksha accept nahi hoga.</p>
+              </div>
+            </div>
+            <div className="reveal" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
+              <div style={{ flexShrink: 0, width: '52px', height: '52px', border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--gold)' }}>2</div>
+              <div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--cream)', marginBottom: '10px' }}>Technical Analysis</div>
+                <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: 'var(--text-muted)' }}>Aapke map pe 16-direction Vastu grid overlay karenge aur saath mein KP Astrology chart se milake complete analysis karenge.</p>
+              </div>
+            </div>
+            <div className="reveal" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
+              <div style={{ flexShrink: 0, width: '52px', height: '52px', border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--gold)' }}>3</div>
+              <div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--cream)', marginBottom: '10px' }}>Logical Consultation</div>
+                <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: 'var(--text-muted)' }}>Findings clearly explain ki jayengi — har point ke peeche logic bataya jayega. Koi blind faith nahi, koi unnecessary darr nahi. Sirf practical solutions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="contact" id="contact">
+        <div className="contact-inner">
+          <div className="section-tag reveal">Get In Touch</div>
+          <h2 className="section-title reveal">Begin Your <em>Consultation</em></h2>
+          <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
+          <p className="contact-desc reveal">Ready to decode your space and align your life? Reach out directly — consultations available both in-person in Dhanbad and online across India.</p>
+
+          {/* IMPORTANT NOTE */}
+          <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
+            <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>📐 Important Note — Before You Consult</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
+              "Jaise ek doctor galat report dekh ke sahi dawai nahi de sakta — waise hum galat naksha dekh ke sahi Vastu nahi de sakte."
+            </div>
+            <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
+            <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '20px' }}>
+              Vastu analysis ki shuruaat hoti hai ek <strong style={{ color: 'var(--cream)' }}>sahi aur to-scale floor plan</strong> se. Haath se bana naksha — chahe kitna bhi saaf ho — accurate nahi hota. Usse jo results milte hain, wo bhi approximate hote hain.
+            </p>
+            <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
+              Isliye consultation se pehle apna floor plan kisi <strong style={{ color: 'var(--cream)' }}>draftsman, architect ya builder</strong> se to-scale banwayein — ya apna original builder drawing lekar aayein.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: '#e74c3c', fontSize: '1rem' }}>✗</span> Haath se bana rough naksha — accurate nahi
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect ka to-scale floor plan — sahi
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Builder ka original drawing — sahi
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North direction clearly marked hona chahiye
+              </div>
+            </div>
+            <div style={{ marginTop: '24px', padding: '16px 20px', background: 'rgba(201,168,76,0.08)', borderLeft: '2px solid var(--gold)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', color: 'var(--cream-2)', fontStyle: 'italic' }}>
+              Sahi Naksha → Sahi Diagnosis → Sahi Samadhan
+            </div>
+          </div>
+          
+          <div className="contact-options reveal">
+            <a href="https://wa.me/91XXXXXXXXXX" className="contact-card">
+              <span className="contact-card-icon">💬</span>
+              <div className="contact-card-label">WhatsApp</div>
+              <div className="contact-card-value">DM Now</div>
+            </a>
+            <a href="#" className="contact-card">
+              <span className="contact-card-icon">📍</span>
+              <div className="contact-card-label">Location</div>
+              <div className="contact-card-value">Dhanbad, JH</div>
+            </a>
+            <a href="https://instagram.com/sandeepinnercore" className="contact-card">
+              <span className="contact-card-icon">🌐</span>
+              <div className="contact-card-label">Social</div>
+              <div className="contact-card-value">@sandeepinnercore</div>
+            </a>
+          </div>
+          
+          <p className="location-note reveal">Serving clients in <span>Dhanbad · Jharkhand · Pan India</span></p>
+
+          {/* SUPABASE CONNECTED CONTACT FORM */}
+          <div className="reveal" style={{ marginTop: '60px', background: 'var(--dark-2)', border: '1px solid rgba(201,168,76,0.15)', padding: '48px 40px', textAlign: 'left', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '24px' }}>Schedule a Session</div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '32px', letterSpacing: '1px' }}>Har consultation strictly confidential rakhi jaati hai.</p>
+            
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Aapka Naam</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Naam likhein" className="form-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Phone Number</label>
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Aapka number" className="form-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Service</label>
+                <select name="service" value={formData.service} onChange={handleChange} className="form-input" required>
+                  <option>Residential Vastu</option>
+                  <option>Commercial Vastu</option>
+                  <option>KP Astrology Reading</option>
+                  <option>Astro-Vastu Combined</option>
+                  <option>Online Consultation</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Upload Floor Plan (Map)</label>
+                <input type="file" onChange={handleFileChange} className="form-input" required />
+              </div>
+              <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '8px', width: '100%' }}>
+                {isSubmitting ? 'Submitting...' : 'Consultation Book Karein'}
+              </button>
+            </form>
           </div>
 
-          {/* नया नोटिस मैसेज */}
-          <p style={{ textAlign: 'center', fontSize: '12px', color: '#64748b', margin: '-10px 0 0 0' }}>
-            * Please check all details above carefully before submitting the form.
-          </p>
+        </div>
+      </section>
 
-          {/* अपडेटेड सबमिट बटन */}
-          <button 
-            type="submit" 
-            disabled={isSubmitting || !mapFile} 
-            style={{ 
-              marginTop: '10px', 
-              padding: '16px', 
-              backgroundColor: !mapFile ? '#cbd5e1' : '#1e293b', 
-              color: '#ffffff', 
-              border: 'none', 
-              borderRadius: '8px', 
-              fontSize: '16px', 
-              fontWeight: '600', 
-              cursor: !mapFile ? 'not-allowed' : 'pointer', 
-              boxShadow: '0 4px 12px rgba(30, 41, 59, 0.2)',
-              transition: 'background-color 0.3s'
-            }}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
-          </button>
-
-        </form>
-      </div>
-    </div>
+      <footer>
+        <div className="footer-logo">The Inner Core</div>
+        <div className="footer-note">Professional Astro-Vastu Consultant · Dhanbad, Jharkhand</div>
+        <div className="footer-note" style={{ color: 'rgba(201,168,76,0.5)' }}>Ancient Wisdom + Modern Logic</div>
+      </footer>
+    </>
   );
 }
 
