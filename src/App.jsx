@@ -10,7 +10,6 @@ function App() {
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Scroll Animation Logic
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -42,7 +41,6 @@ function App() {
     setIsSubmitting(true);
     
     try {
-      // 1. Upload File to Supabase Storage
       const fileExt = mapFile.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -51,14 +49,12 @@ function App() {
         
       if (uploadError) throw uploadError;
 
-      // 2. Get Public URL of the uploaded file
       const { data: publicUrlData } = supabase.storage
         .from('maps')
         .getPublicUrl(fileName);
         
       const fileUrl = publicUrlData.publicUrl;
 
-      // 3. Save Data to Database
       const { error: dbError } = await supabase
         .from('consultations')
         .insert([
@@ -91,7 +87,7 @@ function App() {
           <li><a href="#about">About</a></li>
           <li><a href="#approach">Approach</a></li>
           <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Consult</a></li>
+          <li><a href="#booking-form">Consult</a></li>
         </ul>
       </nav>
 
@@ -122,9 +118,45 @@ function App() {
           <div className="hero-divider"></div>
           <p className="hero-desc">Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
           <div className="hero-cta">
-            <a href="#contact" className="btn-primary">Book Consultation</a>
+            <a href="#booking-form" className="btn-primary">Book Consultation</a>
             <a href="#approach" className="btn-secondary">Our Approach</a>
           </div>
+        </div>
+      </section>
+
+      {/* FORM MOVED TO TOP */}
+      <section id="booking-form" style={{ background: 'var(--dark-2)', padding: '80px 5%' }}>
+        <div className="reveal" style={{ background: 'var(--dark)', border: '1px solid rgba(201,168,76,0.15)', padding: '48px 40px', textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
+          <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '24px', textAlign: 'center' }}>Schedule a Session</div>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '32px', letterSpacing: '1px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
+          
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Aapka Naam</label>
+              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Naam likhein" className="form-input" required />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Phone Number</label>
+              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Aapka number" className="form-input" required />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Service</label>
+              <select name="service" value={formData.service} onChange={handleChange} className="form-input" required>
+                <option>Residential Vastu</option>
+                <option>Commercial Vastu</option>
+                <option>KP Astrology Reading</option>
+                <option>Astro-Vastu Combined</option>
+                <option>Online Consultation</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Upload Floor Plan (Map)</label>
+              <input type="file" onChange={handleFileChange} className="form-input" required />
+            </div>
+            <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '8px', width: '100%' }}>
+              {isSubmitting ? 'Submitting...' : 'Consultation Book Karein'}
+            </button>
+          </form>
         </div>
       </section>
 
@@ -274,7 +306,6 @@ function App() {
         </div>
       </section>
 
-      {/* PROCESS SECTION */}
       <section style={{ background: 'var(--dark-2)', padding: '100px 5%' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div className="section-tag reveal">How It Works</div>
@@ -307,24 +338,22 @@ function App() {
 
       <section className="contact" id="contact">
         <div className="contact-inner">
-          <div className="section-tag reveal">Get In Touch</div>
-          <h2 className="section-title reveal">Begin Your <em>Consultation</em></h2>
+          <div className="section-tag reveal">Important Note</div>
+          <h2 className="section-title reveal">Before You <em>Consult</em></h2>
           <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
-          <p className="contact-desc reveal">Ready to decode your space and align your life? Reach out directly — consultations available both in-person in Dhanbad and online across India.</p>
-
-          {/* IMPORTANT NOTE */}
+          
           <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
             <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
-            <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>📐 Important Note — Before You Consult</div>
+            <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>📐 Guidelines</div>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
               "Jaise ek doctor galat report dekh ke sahi dawai nahi de sakta — waise hum galat naksha dekh ke sahi Vastu nahi de sakte."
             </div>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Vastu analysis ki shuruaat hoti hai ek <strong style={{ color: 'var(--cream)' }}>sahi aur to-scale floor plan</strong> se. Haath se bana naksha — chahe kitna bhi saaf ho — accurate nahi hota. Usse jo results milte hain, wo bhi approximate hote hain.
+              Vastu analysis ki shuruaat hoti hai ek <strong style={{ color: 'var(--cream)' }}>sahi aur to-scale floor plan</strong> se. Haath se bana naksha — chahe kitna bhi saaf ho — accurate nahi hota.
             </p>
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              Isliye consultation se pehle apna floor plan kisi <strong style={{ color: 'var(--cream)' }}>draftsman, architect ya builder</strong> se to-scale banwayein — ya apna original builder drawing lekar aayein.
+              Isliye consultation se pehle apna floor plan kisi <strong style={{ color: 'var(--cream)' }}>draftsman, architect ya builder</strong> se to-scale banwayein.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
@@ -334,14 +363,8 @@ function App() {
                 <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect ka to-scale floor plan — sahi
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Builder ka original drawing — sahi
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North direction clearly marked hona chahiye
               </div>
-            </div>
-            <div style={{ marginTop: '24px', padding: '16px 20px', background: 'rgba(201,168,76,0.08)', borderLeft: '2px solid var(--gold)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', color: 'var(--cream-2)', fontStyle: 'italic' }}>
-              Sahi Naksha → Sahi Diagnosis → Sahi Samadhan
             </div>
           </div>
           
@@ -364,40 +387,6 @@ function App() {
           </div>
           
           <p className="location-note reveal">Serving clients in <span>Dhanbad · Jharkhand · Pan India</span></p>
-
-          {/* SUPABASE CONNECTED CONTACT FORM */}
-          <div className="reveal" style={{ marginTop: '60px', background: 'var(--dark-2)', border: '1px solid rgba(201,168,76,0.15)', padding: '48px 40px', textAlign: 'left', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '24px' }}>Schedule a Session</div>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '32px', letterSpacing: '1px' }}>Har consultation strictly confidential rakhi jaati hai.</p>
-            
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Aapka Naam</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Naam likhein" className="form-input" required />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Phone Number</label>
-                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Aapka number" className="form-input" required />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Service</label>
-                <select name="service" value={formData.service} onChange={handleChange} className="form-input" required>
-                  <option>Residential Vastu</option>
-                  <option>Commercial Vastu</option>
-                  <option>KP Astrology Reading</option>
-                  <option>Astro-Vastu Combined</option>
-                  <option>Online Consultation</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>Upload Floor Plan (Map)</label>
-                <input type="file" onChange={handleFileChange} className="form-input" required />
-              </div>
-              <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '8px', width: '100%' }}>
-                {isSubmitting ? 'Submitting...' : 'Consultation Book Karein'}
-              </button>
-            </form>
-          </div>
 
         </div>
       </section>
