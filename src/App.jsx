@@ -141,7 +141,7 @@ function App() {
             
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Aapka Naam</label>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Full Name</label>
                 <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
               </div>
               
@@ -176,10 +176,9 @@ function App() {
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
                 <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required>
                   <option>Residential Vastu</option>
-                  <option>Commercial Vastu</option>
-                  <option>KP Astrology Reading</option>
+                  <option>Astrology</option>
                   <option>Astro-Vastu Combined</option>
-                  <option>Online Consultation</option>
+              
                 </select>
               </div>
 
