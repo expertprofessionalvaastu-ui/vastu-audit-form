@@ -166,6 +166,32 @@ function App() {
   const isHeroVastu = formData.service === 'Residential Vastu' || formData.service === 'Commercial Vastu' || formData.service === 'Astro-Vastu Combined';
   const isHeroAstro = formData.service === 'KP Astrology Reading' || formData.service === 'Astro-Vastu Combined';
 
+  // NEW LOGIC: Smart Back Button Support (Hash Routing)
+  const openModal = (serviceName) => {
+    setActiveModal(serviceName);
+    window.location.hash = 'booking'; // Add hash to URL
+  };
+
+  const closeModal = () => {
+    if (window.location.hash === '#booking') {
+      window.history.back(); // Pressing "Close" mimics the browser back button
+    } else {
+      setActiveModal(null);
+    }
+  };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      // If the URL hash is removed (e.g., user pressed back button), close the modal
+      if (window.location.hash !== '#booking') {
+        setActiveModal(null);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Existing Escape Key & Scroll animations
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -180,7 +206,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === 'Escape') setActiveModal(null); };
+    const handleKey = (e) => { if (e.key === 'Escape') closeModal(); };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
@@ -235,7 +261,7 @@ function App() {
 
   return (
     <>
-      {activeModal && <BookingModal service={activeModal} onClose={() => setActiveModal(null)} />}
+      {activeModal && <BookingModal service={activeModal} onClose={closeModal} />}
 
       <nav>
         <div className="nav-logo">The Inner Core</div>
@@ -392,7 +418,7 @@ function App() {
             <ul className="service-points">
               <li>Home Vastu Analysis</li><li>Office & Business Vastu</li><li>Plot & Construction Guidance</li><li>Directional Energy Mapping</li><li>Practical Remedies — No Major Demolition</li>
             </ul>
-            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => setActiveModal('Residential Vastu')}>
+            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => openModal('Residential Vastu')}>
               Book Session →
             </button>
           </div>
@@ -404,7 +430,7 @@ function App() {
             <ul className="service-points">
               <li>Birth Chart Analysis</li><li>Event Timing & Prediction</li><li>Career & Business Guidance</li><li>Relationship & Family Analysis</li><li>Muhurat Selection</li>
             </ul>
-            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => setActiveModal('KP Astrology Reading')}>
+            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => openModal('KP Astrology Reading')}>
               Book Session →
             </button>
           </div>
@@ -416,7 +442,7 @@ function App() {
             <ul className="service-points">
               <li>Chart + Space Correlation</li><li>Personalized Remedies</li><li>Timing-Based Action Plan</li><li>Follow-up Support</li>
             </ul>
-            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => setActiveModal('Astro-Vastu Combined')}>
+            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => openModal('Astro-Vastu Combined')}>
               Book Session →
             </button>
           </div>
