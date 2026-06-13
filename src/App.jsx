@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // ============================================
 // BOOKING MODAL COMPONENT (Pop-up Form)
@@ -15,7 +16,6 @@ function BookingModal({ service, onClose }) {
   const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
   const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
 
-  // Mutual Exclusivity Logic for Location
   const isPobDisabled = formData.latitude !== '' || formData.longitude !== '';
   const isCoordsDisabled = formData.pob !== '';
 
@@ -188,9 +188,9 @@ function BookingModal({ service, onClose }) {
 }
 
 // ============================================
-// MAIN APP
+// HOME PAGE COMPONENT (The Main Website)
 // ============================================
-function App() {
+function Home() {
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu'
   });
@@ -201,7 +201,6 @@ function App() {
   const isHeroVastu = formData.service === 'Residential Vastu' || formData.service === 'Commercial Vastu' || formData.service === 'Astro-Vastu Combined';
   const isHeroAstro = formData.service === 'KP Astrology Reading' || formData.service === 'Astro-Vastu Combined';
 
-  // Mutual Exclusivity Logic for Hero Form
   const isHeroPobDisabled = formData.latitude !== '' || formData.longitude !== '';
   const isHeroCoordsDisabled = formData.pob !== '';
 
@@ -303,19 +302,17 @@ function App() {
     letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.25s', fontWeight: '600',
   };
 
-  const inputStyleApp = {
-    padding: '10px 12px', fontSize: '0.85rem', transition: 'all 0.3s ease'
-  };
+  const inputStyleApp = { padding: '10px 12px', fontSize: '0.85rem', transition: 'all 0.3s ease' };
 
   return (
     <>
       {activeModal && <BookingModal service={activeModal} onClose={closeModal} />}
 
       <nav>
-        <div className="nav-logo" style={{ fontSize: '1.4rem', color: '#C9A84C' }}>✦</div>
+        <div className="nav-logo" style={{ letterSpacing: '3px', textTransform: 'uppercase', fontSize: '1.1rem' }}>THE INNER CORE</div>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
-          <li><a href="#approach">Approach</a></li>
+          <li><Link to="/blog">Journal</Link></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -365,9 +362,7 @@ function App() {
                       <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Place of Birth</label>
                       <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isHeroPobDisabled} placeholder="City, State" className="form-input" style={{ ...inputStyleApp, cursor: isHeroPobDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroPobDisabled} />
                     </div>
-                    
                     <div style={{ textAlign: 'center', fontSize: '0.6rem', color: '#C9A84C', letterSpacing: '2px', margin: '10px 0' }}>— OR —</div>
-                    
                     <div style={{ display: 'flex', gap: '12px', opacity: isHeroCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                       <div style={{ flex: 1 }}>
                         <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Latitude</label>
@@ -586,4 +581,43 @@ function App() {
   );
 }
 
-export default App;
+// ============================================
+// ADMIN PANEL (Placeholder)
+// ============================================
+function AdminPanel() {
+  return (
+    <div style={{ padding: '100px 5%', textAlign: 'center', color: '#C9A84C', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <h2 style={{ fontSize: '2.5rem', fontFamily: "'Cormorant Garamond', serif", marginBottom: '20px' }}>Admin Dashboard</h2>
+      <p style={{ color: 'rgba(245,240,232,0.6)', marginBottom: '40px' }}>Login system and Blog editor coming in the next step!</p>
+      <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px' }}>← Back to Home</Link>
+    </div>
+  );
+}
+
+// ============================================
+// BLOG PAGE (Placeholder)
+// ============================================
+function BlogPage() {
+  return (
+    <div style={{ padding: '100px 5%', textAlign: 'center', color: '#C9A84C', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <h2 style={{ fontSize: '3rem', fontFamily: "'Cormorant Garamond', serif", marginBottom: '20px' }}>The Inner Core Journal</h2>
+      <p style={{ color: 'rgba(245,240,232,0.6)', marginBottom: '40px' }}>Articles on Vastu logic and KP Astrology coming soon...</p>
+      <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px' }}>← Back to Home</Link>
+    </div>
+  );
+}
+
+// ============================================
+// ROUTING (The System that handles pages)
+// ============================================
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/blog" element={<BlogPage />} />
+      </Routes>
+    </Router>
+  );
+}
