@@ -309,7 +309,9 @@ function Home() {
       {activeModal && <BookingModal service={activeModal} onClose={closeModal} />}
 
       <nav>
-        <div className="nav-logo" style={{ letterSpacing: '3px', textTransform: 'uppercase', fontSize: '1.1rem' }}>THE INNER CORE</div>
+        <div className="nav-logo" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', color: '#C9A84C' }}>
+          The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
+        </div>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
           <li><Link to="/blog">Journal</Link></li>
@@ -582,33 +584,154 @@ function Home() {
 }
 
 // ============================================
-// ADMIN PANEL (Placeholder)
+// ADMIN PANEL COMPONENT (Password Protected)
 // ============================================
 function AdminPanel() {
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [blogTitle, setBlogTitle] = useState('');
+  const [blogContent, setBlogContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === 'Sandeep@InnerCore') {
+      setIsAuthenticated(true);
+    } else {
+      alert('Incorrect Secret Password!');
+    }
+  };
+
+  const handlePublish = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.from('blogs').insert([
+        { title: blogTitle, content: blogContent }
+      ]);
+      if (error) throw error;
+      alert('Blog Published Successfully! 🎉');
+      setBlogTitle('');
+      setBlogContent('');
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ padding: '100px 5%', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0c0c0c' }}>
+        <div style={{ background: 'rgba(12,12,12,0.97)', border: '1px solid rgba(201,168,76,0.35)', borderRadius: '14px', padding: '36px 32px', width: '100%', maxWidth: '380px', textAlign: 'center', boxShadow: '0 30px 60px rgba(0,0,0,0.8)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🔒</div>
+          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.8rem', color: '#f5f0e8', marginBottom: '24px' }}>Admin Access</h3>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <input 
+              type="password" 
+              placeholder="Enter Secret Password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', textAlign: 'center', boxSizing: 'border-box' }} 
+              required 
+            />
+            <button type="submit" style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase', fontSize: '0.8rem' }}>
+              Unlock Dashboard
+            </button>
+          </form>
+          <div style={{ marginTop: '24px' }}>
+            <Link to="/" style={{ color: 'rgba(245,240,232,0.4)', fontSize: '0.8rem', textDecoration: 'none' }}>← Back to Website</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: '100px 5%', textAlign: 'center', color: '#C9A84C', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <h2 style={{ fontSize: '2.5rem', fontFamily: "'Cormorant Garamond', serif", marginBottom: '20px' }}>Admin Dashboard</h2>
-      <p style={{ color: 'rgba(245,240,232,0.6)', marginBottom: '40px' }}>Login system and Blog editor coming in the next step!</p>
-      <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px' }}>← Back to Home</Link>
+    <div style={{ padding: '60px 5%', color: '#f5f0e8', minHeight: '100vh', maxWidth: '700px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '1px solid rgba(201,168,76,0.2)', paddingBottom: '20px' }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', color: '#C9A84C' }}>Control Panel</h2>
+        <button onClick={() => setIsAuthenticated(false)} style={{ background: 'none', border: '1px solid rgba(231,76,60,0.5)', color: '#e74c3c', padding: '6px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Logout</button>
+      </div>
+      
+      <form onSubmit={handlePublish} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(255,255,255,0.02)', padding: '30px', borderRadius: '12px', border: '1px solid rgba(201,168,76,0.1)' }}>
+        <h3 style={{ fontSize: '1.1rem', color: '#C9A84C', letterSpacing: '1px', textTransform: 'uppercase' }}>Compose Daily / Monthly Wisdom</h3>
+        
+        <div>
+          <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Blog Title</label>
+          <input type="text" value={blogTitle} onChange={(e) => setBlogTitle(e.target.value)} placeholder="e.g., The Science Behind 16 Vastu Zones" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} required />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Content Body</label>
+          <textarea value={blogContent} onChange={(e) => setBlogContent(e.target.value)} placeholder="Write your text here..." rows="12" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', fontFamily: 'inherit', lineHeight: '1.6', boxSizing: 'border-box' }} required></textarea>
+        </div>
+
+        <button type="submit" disabled={isSubmitting} style={{ padding: '14px', background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}>
+          {isSubmitting ? 'Publishing...' : 'Publish Article'}
+        </button>
+      </form>
     </div>
   );
 }
 
 // ============================================
-// BLOG PAGE (Placeholder)
+// BLOG PAGE COMPONENT (Fetches dynamically from Supabase)
 // ============================================
 function BlogPage() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const { data, error } = await supabase.from('blogs').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        setPosts(data || []);
+      } catch (error) {
+        console.error('Error fetching blogs:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
   return (
-    <div style={{ padding: '100px 5%', textAlign: 'center', color: '#C9A84C', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <h2 style={{ fontSize: '3rem', fontFamily: "'Cormorant Garamond', serif", marginBottom: '20px' }}>The Inner Core Journal</h2>
-      <p style={{ color: 'rgba(245,240,232,0.6)', marginBottom: '40px' }}>Articles on Vastu logic and KP Astrology coming soon...</p>
-      <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px' }}>← Back to Home</Link>
+    <div style={{ padding: '100px 5%', color: '#f5f0e8', minHeight: '100vh', maxWidth: '800px', margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+        <h2 style={{ fontSize: '3rem', fontFamily: "'Cormorant Garamond', serif", color: '#C9A84C', marginBottom: '10px' }}>The Inner Core Journal</h2>
+        <p style={{ color: 'rgba(245,240,232,0.6)', fontSize: '0.95rem' }}>Ancient Wisdom + Modern Logic Written Daily & Monthly</p>
+        <div style={{ width: '60px', height: '1px', background: 'rgba(201,168,76,0.4)', margin: '20px auto 0' }}></div>
+      </div>
+
+      {loading ? (
+        <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.5)' }}>Loading journal entries...</p>
+      ) : posts.length === 0 ? (
+        <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.4)' }}>No articles published yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          {posts.map((post) => (
+            <article key={post.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(201,168,76,0.15)', padding: '30px', borderRadius: '12px', textAlign: 'left' }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', color: '#C9A84C', marginBottom: '10px' }}>{post.title}</h3>
+              <div style={{ fontSize: '0.75rem', color: 'rgba(245,240,232,0.4)', marginBottom: '20px' }}>
+                {new Date(post.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </div>
+              <p style={{ lineHeight: '1.8', color: 'rgba(245,240,232,0.8)', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>{post.content}</p>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <div style={{ textAlign: 'center', marginTop: '60px' }}>
+        <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px', fontSize: '0.9rem' }}>← Back to Home</Link>
+      </div>
     </div>
   );
 }
 
 // ============================================
-// ROUTING (The System that handles pages)
+// ROUTING CONFIGURATION
 // ============================================
 export default function App() {
   return (
