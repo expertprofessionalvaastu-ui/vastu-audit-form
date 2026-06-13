@@ -6,7 +6,7 @@ import { supabase } from './supabaseClient';
 // ============================================
 function BookingModal({ service, onClose }) {
   const [formData, setFormData] = useState({
-    name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '',
+    name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: ''
   });
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,6 +14,10 @@ function BookingModal({ service, onClose }) {
 
   const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
   const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
+
+  // Mutual Exclusivity Logic for Location
+  const isPobDisabled = formData.latitude !== '' || formData.longitude !== '';
+  const isCoordsDisabled = formData.pob !== '';
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setMapFile(e.target.files[0]);
@@ -23,6 +27,10 @@ function BookingModal({ service, onClose }) {
     if (isVastu && !mapFile) {
       alert('Please upload your Floor Plan.'); return;
     }
+    if (isAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
+      alert('Please provide either Place of Birth OR both Latitude & Longitude.'); return;
+    }
+
     setIsSubmitting(true);
     try {
       let fileUrl = null;
@@ -40,7 +48,13 @@ function BookingModal({ service, onClose }) {
         district: formData.district, state: formData.state, country: formData.country,
         service: service,
         ...(fileUrl && { map_url: fileUrl }),
-        ...(isAstro && { dob: formData.dob || null, tob: formData.tob || null, pob: formData.pob || null }),
+        ...(isAstro && { 
+          dob: formData.dob || null, 
+          tob: formData.tob || null, 
+          pob: formData.pob || null,
+          latitude: formData.latitude || null,
+          longitude: formData.longitude || null
+        }),
       };
 
       const { error: dbError } = await supabase.from('leads').insert([insertData]);
@@ -70,10 +84,12 @@ function BookingModal({ service, onClose }) {
   const inputStyle = {
     width: '100%', padding: '10px 12px', fontSize: '0.85rem', background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box',
+    transition: 'all 0.3s ease'
   };
 
   const labelStyle = {
     display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '6px',
+    transition: 'all 0.3s ease'
   };
 
   if (isSuccess) {
@@ -117,7 +133,26 @@ function BookingModal({ service, onClose }) {
                 <div style={{ flex: 1 }}><label style={labelStyle}>Date of Birth</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} style={inputStyle} required={isAstro} /></div>
                 <div style={{ flex: 1 }}><label style={labelStyle}>Time of Birth</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} style={inputStyle} required={isAstro} /></div>
               </div>
-              <div><label style={labelStyle}>Place of Birth</label><input type="text" name="pob" value={formData.pob} onChange={handleChange} placeholder="City, State" style={inputStyle} required={isAstro} /></div>
+              
+              <div style={{ background: 'rgba(201,168,76,0.03)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(201,168,76,0.1)' }}>
+                <div style={{ opacity: isPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                  <label style={labelStyle}>Place of Birth</label>
+                  <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isPobDisabled} placeholder="City, State" style={{ ...inputStyle, cursor: isPobDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isPobDisabled} />
+                </div>
+
+                <div style={{ textAlign: 'center', fontSize: '0.6rem', color: '#C9A84C', letterSpacing: '2px', margin: '12px 0' }}>— OR —</div>
+
+                <div style={{ display: 'flex', gap: '12px', opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>Latitude</label>
+                    <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 23.7957" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>Longitude</label>
+                    <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 86.4304" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                  </div>
+                </div>
+              </div>
             </>
           )}
 
@@ -157,7 +192,7 @@ function BookingModal({ service, onClose }) {
 // ============================================
 function App() {
   const [formData, setFormData] = useState({
-    name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', service: 'Residential Vastu'
+    name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu'
   });
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -166,15 +201,18 @@ function App() {
   const isHeroVastu = formData.service === 'Residential Vastu' || formData.service === 'Commercial Vastu' || formData.service === 'Astro-Vastu Combined';
   const isHeroAstro = formData.service === 'KP Astrology Reading' || formData.service === 'Astro-Vastu Combined';
 
-  // NEW LOGIC: Smart Back Button Support (Hash Routing)
+  // Mutual Exclusivity Logic for Hero Form
+  const isHeroPobDisabled = formData.latitude !== '' || formData.longitude !== '';
+  const isHeroCoordsDisabled = formData.pob !== '';
+
   const openModal = (serviceName) => {
     setActiveModal(serviceName);
-    window.location.hash = 'booking'; // Add hash to URL
+    window.location.hash = 'booking'; 
   };
 
   const closeModal = () => {
     if (window.location.hash === '#booking') {
-      window.history.back(); // Pressing "Close" mimics the browser back button
+      window.history.back(); 
     } else {
       setActiveModal(null);
     }
@@ -182,16 +220,12 @@ function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      // If the URL hash is removed (e.g., user pressed back button), close the modal
-      if (window.location.hash !== '#booking') {
-        setActiveModal(null);
-      }
+      if (window.location.hash !== '#booking') setActiveModal(null);
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Existing Escape Key & Scroll animations
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -219,6 +253,10 @@ function App() {
     if (isHeroVastu && !mapFile) {
       alert("Please upload your Floor Plan."); return;
     }
+    if (isHeroAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
+      alert('Please provide either Place of Birth OR both Latitude & Longitude.'); return;
+    }
+
     setIsSubmitting(true);
     try {
       let fileUrl = null;
@@ -236,14 +274,20 @@ function App() {
         district: formData.district, state: formData.state, country: formData.country,
         service: formData.service,
         ...(fileUrl && { map_url: fileUrl }),
-        ...(isHeroAstro && { dob: formData.dob || null, tob: formData.tob || null, pob: formData.pob || null }),
+        ...(isHeroAstro && { 
+          dob: formData.dob || null, 
+          tob: formData.tob || null, 
+          pob: formData.pob || null,
+          latitude: formData.latitude || null,
+          longitude: formData.longitude || null
+        }),
       };
 
       const { error: dbError } = await supabase.from('leads').insert([insertData]);
       if (dbError) throw dbError;
       
       alert('🙏 Om Shanti! Request bhej di gayi hai. Hum jald hi aapse sampark karenge.');
-      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', service: 'Residential Vastu' });
+      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu' });
       setMapFile(null);
       e.target.reset();
     } catch (error) {
@@ -259,12 +303,16 @@ function App() {
     letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.25s', fontWeight: '600',
   };
 
+  const inputStyleApp = {
+    padding: '10px 12px', fontSize: '0.85rem', transition: 'all 0.3s ease'
+  };
+
   return (
     <>
       {activeModal && <BookingModal service={activeModal} onClose={closeModal} />}
 
       <nav>
-        <div className="nav-logo">The Inner Core</div>
+        <div className="nav-logo" style={{ fontSize: '1.4rem', color: '#C9A84C' }}>✦</div>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
           <li><a href="#approach">Approach</a></li>
@@ -284,7 +332,7 @@ function App() {
         </svg>
 
         <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
-          <div className="hero-tag">Dhanbad, Jharkhand · Consulting</div>
+          <div className="hero-tag">Astro-Vastu Consulting</div>
           <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
           <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
           <div className="hero-divider" style={{ margin: '20px 0' }}></div>
@@ -302,7 +350,7 @@ function App() {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Full Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-input" style={inputStyleApp} required />
               </div>
 
               {isHeroAstro && (
@@ -311,27 +359,43 @@ function App() {
                     <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>DOB</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
                     <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Time</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
                   </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Place of Birth</label>
-                    <input type="text" name="pob" value={formData.pob} onChange={handleChange} placeholder="City, State" className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required={isHeroAstro} />
+                  
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ opacity: isHeroPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                      <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Place of Birth</label>
+                      <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isHeroPobDisabled} placeholder="City, State" className="form-input" style={{ ...inputStyleApp, cursor: isHeroPobDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroPobDisabled} />
+                    </div>
+                    
+                    <div style={{ textAlign: 'center', fontSize: '0.6rem', color: '#C9A84C', letterSpacing: '2px', margin: '10px 0' }}>— OR —</div>
+                    
+                    <div style={{ display: 'flex', gap: '12px', opacity: isHeroCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Latitude</label>
+                        <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 23.7957" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Longitude</label>
+                        <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 86.4304" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required /></div>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required /></div>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
               </div>
               
-              <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label><input type="text" name="country" value={formData.country} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required /></div>
+              <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label><input type="text" name="country" value={formData.country} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required /></div>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required /></div>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
               </div>
 
               <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
-                <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={{ padding: '10px 12px', fontSize: '0.85rem' }} required>
+                <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={inputStyleApp} required>
                   <option>Residential Vastu</option>
                   <option>Commercial Vastu</option>
                   <option>KP Astrology Reading</option>
@@ -366,20 +430,22 @@ function App() {
         <div className="about-grid">
           <div className="about-visual reveal">
             <div className="about-box">
-              <span className="about-symbol">🔮</span>
+              <img src="/sandeep-pic.jpg" alt="Sandeep Kumar" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', marginBottom: '15px', border: '2px solid var(--gold)' }} />
               <div className="about-name">Sandeep Kumar</div>
               <div className="about-designation">Founder · The Inner Core</div>
               <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '20px auto' }}></div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '2' }}>KP Astrologer<br/>Vastu Consultant<br/>Digital Creator<br/>Dhanbad, Jharkhand</div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '2' }}>KP Astrologer<br/>Vastu Consultant</div>
             </div>
           </div>
           <div className="about-content reveal">
             <div className="section-tag">About</div>
             <h2 className="section-title">Aligning Spaces<br/>with <em>Purpose</em></h2>
             <div className="gold-divider" style={{ margin: '20px 0 40px' }}></div>
-            <p className="about-text">I am Sandeep Kumar — a Professional Astro-Vastu Consultant based in Dhanbad. My work bridges the gap between ancient Indian sciences and the modern, logical mind.</p>
-            <p className="about-text">I do not believe in blind faith or superstition. Every recommendation I make is backed by classical Vastu Shastra principles, KP Astrology logic, and observable data — so you can understand <em>why</em> a change works, not just that it does.</p>
-            <div className="about-highlight">"Results speak. My job is to decode your space and your stars — and give you practical, verifiable solutions."</div>
+            <p className="about-text">I am Sandeep Kumar — a Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.</p>
+            <p className="about-text">I do not believe in blind faith or superstition. Every recommendation I make is backed by classical Vastu Shastra principles, KP Astrology logic, and observable data.</p>
+            <div className="about-highlight">
+              "I put 100% effort into my analysis, but practically, my Astro-Vastu remedies will deliver 70% of the result. The remaining 30% to achieve the full 100% outcome depends entirely on your <em>Prarabdha Karma</em>."
+            </div>
           </div>
         </div>
       </section>
@@ -446,16 +512,6 @@ function App() {
               Book Session →
             </button>
           </div>
-
-          <div className="service-card reveal">
-            <span className="service-icon">📱</span>
-            <div className="service-title">Online Consultation</div>
-            <p className="service-desc">Distance is not a barrier. Get a full consultation via WhatsApp or video call — with detailed analysis shared digitally for your reference anytime.</p>
-            <ul className="service-points">
-              <li>WhatsApp Consultation</li><li>Video Call Analysis</li><li>Written Report Provided</li><li>Available Pan India</li>
-            </ul>
-            <a href="https://wa.me/91XXXXXXXXXX" style={{ ...bookBtnStyle, textDecoration: 'none', textAlign: 'center', display: 'block' }}>WhatsApp Now →</a>
-          </div>
         </div>
       </section>
 
@@ -518,13 +574,12 @@ function App() {
             <a href="#" className="contact-card"><span className="contact-card-icon">📍</span><div className="contact-card-label">Location</div><div className="contact-card-value">Dhanbad, JH</div></a>
             <a href="https://instagram.com/sandeepinnercore" className="contact-card"><span className="contact-card-icon">🌐</span><div className="contact-card-label">Social</div><div className="contact-card-value">@sandeepinnercore</div></a>
           </div>
-          <p className="location-note reveal">Serving clients in <span>Dhanbad · Jharkhand · Pan India</span></p>
         </div>
       </section>
 
       <footer>
         <div className="footer-logo">The Inner Core</div>
-        <div className="footer-note">Professional Astro-Vastu Consultant · Dhanbad, Jharkhand</div>
+        <div className="footer-note">Professional Astro-Vastu Consultant</div>
         <div className="footer-note" style={{ color: 'rgba(201,168,76,0.5)' }}>Ancient Wisdom + Modern Logic</div>
       </footer>
     </>
