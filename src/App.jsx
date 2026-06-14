@@ -598,11 +598,7 @@ function Home() {
         </div>
       </section>
 
-      <footer>
-        <div className="footer-logo">The Inner Core</div>
-        <div className="footer-note">Professional Astro-Vastu Consultant</div>
-        <div className="footer-note" style={{ color: 'rgba(201,168,76,0.5)' }}>Ancient Wisdom + Modern Logic</div>
-      </footer>
+      
     </>
   );
 }
