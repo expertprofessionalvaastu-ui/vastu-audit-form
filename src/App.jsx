@@ -355,7 +355,7 @@ function Home() {
         </svg>
 
         <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
-          <div className="hero-tag">Astro-Vastu Consulting</div>
+          
           <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
           <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
           <div className="hero-divider" style={{ margin: '20px 0' }}></div>
