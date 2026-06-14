@@ -19,7 +19,7 @@ function Navbar() {
 
       {/* Centered Logo (SIZE INCREASED HERE) */}
       <Link to="/" style={{ flex: 1, textAlign: 'center', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.8rem', color: '#C9A84C', lineHeight: '1' }}>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '3rem', color: '#C9A84C', lineHeight: '1' }}>
           The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
         </div>
       </Link>
