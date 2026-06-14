@@ -3,6 +3,41 @@ import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // ============================================
+// SHARED NAVBAR COMPONENT (Fixed & Centered)
+// ============================================
+function Navbar() {
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 9999,
+      background: 'rgba(12, 12, 12, 0.98)', backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid rgba(201,168,76,0.15)',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '16px 5%', boxSizing: 'border-box', transition: 'all 0.3s ease'
+    }}>
+      {/* Empty Left Space to balance the center */}
+      <div style={{ flex: 1 }}></div>
+
+      {/* Centered Logo */}
+      <Link to="/" style={{ flex: 1, textAlign: 'center', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', color: '#C9A84C', lineHeight: '1' }}>
+          The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
+        </div>
+      </Link>
+
+      {/* Right Navigation Links */}
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+        <ul className="nav-links" style={{ display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' }}>
+          <li><a href="/#about">About</a></li>
+          <li><Link to="/blog">Journal</Link></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+  );
+}
+
+// ============================================
 // BOOKING MODAL COMPONENT (Pop-up Form)
 // ============================================
 function BookingModal({ service, onClose }) {
@@ -70,7 +105,7 @@ function BookingModal({ service, onClose }) {
 
   const overlayStyle = {
     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0,0,0,0.85)', zIndex: 1000,
+    background: 'rgba(0,0,0,0.85)', zIndex: 10000, // Very high z-index to sit over navbar
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: '20px', backdropFilter: 'blur(6px)',
   };
@@ -307,20 +342,12 @@ function Home() {
   return (
     <>
       {activeModal && <BookingModal service={activeModal} onClose={closeModal} />}
+      <Navbar />
 
-      <nav>
-        <div className="nav-logo" style={{ fontSize: '1.4rem', color: '#C9A84C' }}>✦</div>
-        <ul className="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><Link to="/blog">Journal</Link></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-
-      <section className="hero" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', padding: '140px 5% 80px', gap: '60px', minHeight: '100vh', position: 'relative', overflow: 'hidden', textAlign: 'center' }}>
+      {/* Increased top padding (160px) so the fixed navbar doesn't hide content */}
+      <section className="hero" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: '160px 5% 80px', gap: '40px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
         <div className="hero-bg"></div>
-        <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', opacity: 0.2, zIndex: 0, width: '1200px', height: '1200px', pointerEvents: 'none', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', right: '-15%', top: '50%', transform: 'translateY(-50%)', opacity: 0.25, zIndex: 0, width: '800px', height: '800px', pointerEvents: 'none' }}>
           <circle cx="200" cy="200" r="190" stroke="#C9A84C" strokeWidth="0.5"/><circle cx="200" cy="200" r="150" stroke="#C9A84C" strokeWidth="0.5"/><circle cx="200" cy="200" r="100" stroke="#C9A84C" strokeWidth="0.5"/><circle cx="200" cy="200" r="50" stroke="#C9A84C" strokeWidth="0.5"/>
           <line x1="200" y1="10" x2="200" y2="390" stroke="#C9A84C" strokeWidth="0.5"/><line x1="10" y1="200" x2="390" y2="200" stroke="#C9A84C" strokeWidth="0.5"/>
           <line x1="55" y1="55" x2="345" y2="345" stroke="#C9A84C" strokeWidth="0.5"/><line x1="345" y1="55" x2="55" y2="345" stroke="#C9A84C" strokeWidth="0.5"/>
@@ -328,97 +355,88 @@ function Home() {
           <polygon points="10,200 190,190 200,200 190,210" fill="#C9A84C"/><polygon points="390,200 210,190 200,200 210,210" fill="#C9A84C"/>
         </svg>
 
-        {/* --- HUGE CENTERED LOGO AREA --- */}
-        <div className="hero-main-title-area" style={{ zIndex: 1, width: '100%', marginBottom: '-20px' }}>
-          <div className="hero-tag" style={{ margin: '0 auto 15px' }}>Astro-Vastu Consulting</div>
-          <h1 className="hero-title" style={{ fontSize: '7rem', lineHeight: '1', fontFamily: "'Cormorant Garamond', serif", color: '#f5f0e8' }}>
-            The <span style={{ fontStyle: 'italic', fontWeight: '400' }}>Inner Core</span>
-          </h1>
-          <p className="hero-subtitle" style={{ fontSize: '1.4rem', color: '#f5f0e8', opacity: 0.8, letterSpacing: '4px', textTransform: 'uppercase', marginTop: '10px' }}>Professional Astro-Vastu Consultant</p>
-          <div className="hero-divider" style={{ margin: '30px auto' }}></div>
+        <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
+          <div className="hero-tag">Astro-Vastu Consulting</div>
+          <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
+          <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
+          <div className="hero-divider" style={{ margin: '20px 0' }}></div>
+          <p className="hero-desc" style={{ maxWidth: '90%' }}>Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
+          <div className="hero-cta" style={{ justifyContent: 'flex-start', marginTop: '30px' }}>
+            <a href="#approach" className="btn-secondary">Explore Our Approach</a>
+          </div>
         </div>
 
-        {/* --- Lower Split Area (Description + Form) --- */}
-        <div className="hero-lower-area" style={{ zIndex: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '40px', width: '100%', maxWidth: '1100px', textAlign: 'left' }}>
-            <div className="hero-description-block" style={{ flex: '1 1 450px' }}>
-              <p className="hero-desc" style={{ maxWidth: '95%', fontSize: '1.1rem', lineHeight: '1.9' }}>Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
-              <div className="hero-cta" style={{ justifyContent: 'flex-start', marginTop: '40px' }}>
-                <a href="#approach" className="btn-secondary">Explore Our Approach</a>
+        {/* HERO FORM */}
+        <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
+          <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
+            <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Schedule a Session</div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Full Name</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-input" style={inputStyleApp} required />
               </div>
-            </div>
 
-            {/* HERO FORM BOX (keep existing style) */}
-            <div style={{ flex: '1 1 400px', width: '100%', maxWidth: '440px' }}>
-              <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
-                <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Schedule a Session</div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Full Name</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-input" style={inputStyleApp} required />
-                  </div>
-
-                  {isHeroAstro && (
-                    <>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>DOB</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
-                        <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Time</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
-                      </div>
-                      
-                      <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        <div style={{ opacity: isHeroPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
-                          <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Place of Birth</label>
-                          <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isHeroPobDisabled} placeholder="City, State" className="form-input" style={{ ...inputStyleApp, cursor: isHeroPobDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroPobDisabled} />
-                        </div>
-                        <div style={{ textAlign: 'center', fontSize: '0.6rem', color: '#C9A84C', letterSpacing: '2px', margin: '10px 0' }}>— OR —</div>
-                        <div style={{ display: 'flex', gap: '12px', opacity: isHeroCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
-                          <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Latitude</label>
-                            <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 23.7957" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Longitude</label>
-                            <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 86.4304" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
+              {isHeroAstro && (
+                <>
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
-                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>DOB</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
+                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Time</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
                   </div>
                   
-                  <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label><input type="text" name="country" value={formData.country} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
-
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
-                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
-                  </div>
-
-                  <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
-                    <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={inputStyleApp} required>
-                      <option>Residential Vastu</option>
-                      <option>Commercial Vastu</option>
-                      <option>KP Astrology Reading</option>
-                      <option>Astro-Vastu Combined</option>
-                    </select>
-                  </div>
-
-                  {isHeroVastu && (
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Upload Floor Plan (Map)</label>
-                      <input type="file" onChange={handleFileChange} className="form-input" style={{ padding: '8px', fontSize: '0.8rem' }} required={isHeroVastu} />
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ opacity: isHeroPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                      <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Place of Birth</label>
+                      <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isHeroPobDisabled} placeholder="City, State" className="form-input" style={{ ...inputStyleApp, cursor: isHeroPobDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroPobDisabled} />
                     </div>
-                  )}
+                    <div style={{ textAlign: 'center', fontSize: '0.6rem', color: '#C9A84C', letterSpacing: '2px', margin: '10px 0' }}>— OR —</div>
+                    <div style={{ display: 'flex', gap: '12px', opacity: isHeroCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Latitude</label>
+                        <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 23.7957" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Longitude</label>
+                        <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 86.4304" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
-                  <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '8px', width: '100%', padding: '12px', fontSize: '0.9rem', letterSpacing: '2px' }}>
-                    {isSubmitting ? 'Submitting...' : 'Book Consultation'}
-                  </button>
-                </form>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
               </div>
-            </div>
+              
+              <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label><input type="text" name="country" value={formData.country} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+              </div>
+
+              <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
+                <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={inputStyleApp} required>
+                  <option>Residential Vastu</option>
+                  <option>Commercial Vastu</option>
+                  <option>KP Astrology Reading</option>
+                  <option>Astro-Vastu Combined</option>
+                </select>
+              </div>
+
+              {isHeroVastu && (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Upload Floor Plan (Map)</label>
+                  <input type="file" onChange={handleFileChange} className="form-input" style={{ padding: '8px', fontSize: '0.8rem' }} required={isHeroVastu} />
+                </div>
+              )}
+
+              <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '8px', width: '100%', padding: '12px', fontSize: '0.9rem', letterSpacing: '2px' }}>
+                {isSubmitting ? 'Submitting...' : 'Book Consultation'}
+              </button>
+            </form>
+          </div>
         </div>
       </section>
 
@@ -562,7 +580,7 @@ function Home() {
             </div>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Vastu analysis ki shuruaat hoti hai ek <strong style={{ color: 'var(--cream)' }}>sahi aur to-scale floor plan</strong> se. Haath se bana naksha — chahe kitna bhi saaf हो — accurate nahi hota.
+              Vastu analysis ki shuruaat hoti hai ek <strong style={{ color: 'var(--cream)' }}>sahi aur to-scale floor plan</strong> se. Haath se bana naksha — chahe kitna bhi saaf ho — accurate nahi hota.
             </p>
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
               Isliye consultation se pehle apna floor plan kisi <strong style={{ color: 'var(--cream)' }}>draftsman, architect ya builder</strong> se to-scale banwayein.
@@ -671,35 +689,38 @@ function AdminPanel() {
   }
 
   return (
-    <div style={{ padding: '60px 5%', color: '#f5f0e8', minHeight: '100vh', maxWidth: '700px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '1px solid rgba(201,168,76,0.2)', paddingBottom: '20px' }}>
-        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', color: '#C9A84C' }}>Control Panel</h2>
-        <button onClick={() => setIsAuthenticated(false)} style={{ background: 'none', border: '1px solid rgba(231,76,60,0.5)', color: '#e74c3c', padding: '6px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Logout</button>
-      </div>
-      
-      <form onSubmit={handlePublish} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(255,255,255,0.02)', padding: '30px', borderRadius: '12px', border: '1px solid rgba(201,168,76,0.1)' }}>
-        <h3 style={{ fontSize: '1.1rem', color: '#C9A84C', letterSpacing: '1px', textTransform: 'uppercase' }}>Compose Article</h3>
+    <>
+      <Navbar />
+      <div style={{ padding: '120px 5% 60px', color: '#f5f0e8', minHeight: '100vh', maxWidth: '700px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '1px solid rgba(201,168,76,0.2)', paddingBottom: '20px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', color: '#C9A84C' }}>Control Panel</h2>
+          <button onClick={() => setIsAuthenticated(false)} style={{ background: 'none', border: '1px solid rgba(231,76,60,0.5)', color: '#e74c3c', padding: '6px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Logout</button>
+        </div>
         
-        <div>
-          <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Cover Image (Optional)</label>
-          <input type="file" accept="image/*" onChange={(e) => setBlogImage(e.target.files[0])} style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} />
-        </div>
+        <form onSubmit={handlePublish} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(255,255,255,0.02)', padding: '30px', borderRadius: '12px', border: '1px solid rgba(201,168,76,0.1)' }}>
+          <h3 style={{ fontSize: '1.1rem', color: '#C9A84C', letterSpacing: '1px', textTransform: 'uppercase' }}>Compose Article</h3>
+          
+          <div>
+            <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Cover Image (Optional)</label>
+            <input type="file" accept="image/*" onChange={(e) => setBlogImage(e.target.files[0])} style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} />
+          </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Blog Title</label>
-          <input type="text" value={blogTitle} onChange={(e) => setBlogTitle(e.target.value)} placeholder="e.g., The Science Behind 16 Vastu Zones" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} required />
-        </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Blog Title</label>
+            <input type="text" value={blogTitle} onChange={(e) => setBlogTitle(e.target.value)} placeholder="e.g., The Science Behind 16 Vastu Zones" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} required />
+          </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Content Body</label>
-          <textarea value={blogContent} onChange={(e) => setBlogContent(e.target.value)} placeholder="Write your text here..." rows="12" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', fontFamily: 'inherit', lineHeight: '1.6', boxSizing: 'border-box' }} required></textarea>
-        </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Content Body</label>
+            <textarea value={blogContent} onChange={(e) => setBlogContent(e.target.value)} placeholder="Write your text here..." rows="12" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', fontFamily: 'inherit', lineHeight: '1.6', boxSizing: 'border-box' }} required></textarea>
+          </div>
 
-        <button type="submit" disabled={isSubmitting} style={{ padding: '14px', background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}>
-          {isSubmitting ? 'Publishing...' : 'Publish Article'}
-        </button>
-      </form>
-    </div>
+          <button type="submit" disabled={isSubmitting} style={{ padding: '14px', background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}>
+            {isSubmitting ? 'Publishing...' : 'Publish Article'}
+          </button>
+        </form>
+      </div>
+    </>
   );
 }
 
@@ -726,40 +747,43 @@ function BlogPage() {
   }, []);
 
   return (
-    <div style={{ padding: '100px 5%', color: '#f5f0e8', minHeight: '100vh', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-        <h2 style={{ fontSize: '3rem', fontFamily: "'Cormorant Garamond', serif", color: '#C9A84C', marginBottom: '10px' }}>The Inner Core Journal</h2>
-        <p style={{ color: 'rgba(245,240,232,0.6)', fontSize: '0.95rem' }}>Ancient Wisdom + Modern Logic Written Daily & Monthly</p>
-        <div style={{ width: '60px', height: '1px', background: 'rgba(201,168,76,0.4)', margin: '20px auto 0' }}></div>
-      </div>
-
-      {loading ? (
-        <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.5)' }}>Loading journal entries...</p>
-      ) : posts.length === 0 ? (
-        <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.4)' }}>No articles published yet.</p>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '50px' }}>
-          {posts.map((post) => (
-            <article key={post.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(201,168,76,0.15)', padding: '30px', borderRadius: '12px', textAlign: 'left', overflow: 'hidden' }}>
-              {post.image_url && (
-                <div style={{ margin: '-30px -30px 20px -30px', borderBottom: '1px solid rgba(201,168,76,0.15)' }}>
-                  <img src={post.image_url} alt={post.title} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', display: 'block' }} />
-                </div>
-              )}
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', color: '#C9A84C', marginBottom: '10px' }}>{post.title}</h3>
-              <div style={{ fontSize: '0.75rem', color: 'rgba(245,240,232,0.4)', marginBottom: '20px' }}>
-                {new Date(post.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </div>
-              <p style={{ lineHeight: '1.8', color: 'rgba(245,240,232,0.8)', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>{post.content}</p>
-            </article>
-          ))}
+    <>
+      <Navbar />
+      <div style={{ padding: '160px 5% 80px', color: '#f5f0e8', minHeight: '100vh', maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <h2 style={{ fontSize: '3rem', fontFamily: "'Cormorant Garamond', serif", color: '#C9A84C', marginBottom: '10px' }}>The Inner Core Journal</h2>
+          <p style={{ color: 'rgba(245,240,232,0.6)', fontSize: '0.95rem' }}>Ancient Wisdom + Modern Logic Written Daily & Monthly</p>
+          <div style={{ width: '60px', height: '1px', background: 'rgba(201,168,76,0.4)', margin: '20px auto 0' }}></div>
         </div>
-      )}
 
-      <div style={{ textAlign: 'center', marginTop: '60px' }}>
-        <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px', fontSize: '0.9rem' }}>← Back to Home</Link>
+        {loading ? (
+          <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.5)' }}>Loading journal entries...</p>
+        ) : posts.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.4)' }}>No articles published yet.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '50px' }}>
+            {posts.map((post) => (
+              <article key={post.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(201,168,76,0.15)', padding: '30px', borderRadius: '12px', textAlign: 'left', overflow: 'hidden' }}>
+                {post.image_url && (
+                  <div style={{ margin: '-30px -30px 20px -30px', borderBottom: '1px solid rgba(201,168,76,0.15)' }}>
+                    <img src={post.image_url} alt={post.title} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', display: 'block' }} />
+                  </div>
+                )}
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', color: '#C9A84C', marginBottom: '10px' }}>{post.title}</h3>
+                <div style={{ fontSize: '0.75rem', color: 'rgba(245,240,232,0.4)', marginBottom: '20px' }}>
+                  {new Date(post.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
+                <p style={{ lineHeight: '1.8', color: 'rgba(245,240,232,0.8)', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>{post.content}</p>
+              </article>
+            ))}
+          </div>
+        )}
+
+        <div style={{ textAlign: 'center', marginTop: '60px' }}>
+          <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px', fontSize: '0.9rem' }}>← Back to Home</Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
