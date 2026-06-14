@@ -17,9 +17,9 @@ function Navbar() {
       {/* Empty Left Space to balance the center */}
       <div style={{ flex: 1 }}></div>
 
-      {/* Centered Logo */}
+      {/* Centered Logo (SIZE INCREASED HERE) */}
       <Link to="/" style={{ flex: 1, textAlign: 'center', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', color: '#C9A84C', lineHeight: '1' }}>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.8rem', color: '#C9A84C', lineHeight: '1' }}>
           The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
         </div>
       </Link>
@@ -105,7 +105,7 @@ function BookingModal({ service, onClose }) {
 
   const overlayStyle = {
     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0,0,0,0.85)', zIndex: 10000, // Very high z-index to sit over navbar
+    background: 'rgba(0,0,0,0.85)', zIndex: 10000, 
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: '20px', backdropFilter: 'blur(6px)',
   };
@@ -344,7 +344,6 @@ function Home() {
       {activeModal && <BookingModal service={activeModal} onClose={closeModal} />}
       <Navbar />
 
-      {/* Increased top padding (160px) so the fixed navbar doesn't hide content */}
       <section className="hero" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: '160px 5% 80px', gap: '40px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
         <div className="hero-bg"></div>
         <svg className="hero-mandala" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', right: '-15%', top: '50%', transform: 'translateY(-50%)', opacity: 0.25, zIndex: 0, width: '800px', height: '800px', pointerEvents: 'none' }}>
