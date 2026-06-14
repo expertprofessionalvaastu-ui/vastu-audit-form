@@ -356,7 +356,7 @@ function Home() {
 
         <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
           
-          <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
+          <h1 className="hero-title"><em>The Inner Core</em></h1>
           <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
           <div className="hero-divider" style={{ margin: '20px 0' }}></div>
           <p className="hero-desc" style={{ maxWidth: '90%' }}>Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
