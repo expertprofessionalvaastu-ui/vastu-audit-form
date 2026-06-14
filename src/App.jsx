@@ -354,16 +354,7 @@ function Home() {
           <polygon points="10,200 190,190 200,200 190,210" fill="#C9A84C"/><polygon points="390,200 210,190 200,200 210,210" fill="#C9A84C"/>
         </svg>
 
-        <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
-          <div className="hero-tag">Astro-Vastu Consulting</div>
-          <h1 className="hero-title">The<br/><em>Inner Core</em></h1>
-          <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
-          <div className="hero-divider" style={{ margin: '20px 0' }}></div>
-          <p className="hero-desc" style={{ maxWidth: '90%' }}>Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
-          <div className="hero-cta" style={{ justifyContent: 'flex-start', marginTop: '30px' }}>
-            <a href="#approach" className="btn-secondary">Explore Our Approach</a>
-          </div>
-        </div>
+        
 
         {/* HERO FORM */}
         <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
@@ -598,7 +589,11 @@ function Home() {
         </div>
       </section>
 
-      
+      <footer>
+        <div className="footer-logo">The Inner Core</div>
+        <div className="footer-note">Professional Astro-Vastu Consultant</div>
+        <div className="footer-note" style={{ color: 'rgba(201,168,76,0.5)' }}>Ancient Wisdom + Modern Logic</div>
+      </footer>
     </>
   );
 }
