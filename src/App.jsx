@@ -216,6 +216,8 @@ function BookingModal({ service, onClose }) {
             marginTop: '8px', width: '100%', padding: '13px', background: isSubmitting ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C, #a07830)',
             border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.85rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: isSubmitting ? 'not-allowed' : 'pointer',
           }}>{isSubmitting ? 'Submitting...' : 'Book Consultation'}</button>
+
+          
         </form>
       </div>
     </div>
@@ -284,17 +286,17 @@ function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isHeroVastu && !mapFile) {
-      alert("Please upload your Floor Plan."); return;
+    if (isVastu && !mapFile) {
+      alert('Please upload your Floor Plan.'); return;
     }
-    if (isHeroAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
+    if (isAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
       alert('Please provide either Place of Birth OR both Latitude & Longitude.'); return;
     }
 
     setIsSubmitting(true);
     try {
       let fileUrl = null;
-      if (isHeroVastu && mapFile) {
+      if (isVastu && mapFile) {
         const fileExt = mapFile.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage.from('house_maps').upload(fileName, mapFile);
@@ -302,13 +304,13 @@ function Home() {
         const { data: publicUrlData } = supabase.storage.from('house_maps').getPublicUrl(fileName);
         fileUrl = publicUrlData.publicUrl;
       }
-      
+
       const insertData = {
         name: formData.name, phone: formData.phone, email: formData.email,
         district: formData.district, state: formData.state, country: formData.country,
-        service: formData.service,
+        service: service,
         ...(fileUrl && { map_url: fileUrl }),
-        ...(isHeroAstro && { 
+        ...(isAstro && { 
           dob: formData.dob || null, 
           tob: formData.tob || null, 
           pob: formData.pob || null,
@@ -317,13 +319,26 @@ function Home() {
         }),
       };
 
+      // 1. Supabase में डेटा डालें
       const { error: dbError } = await supabase.from('leads').insert([insertData]);
       if (dbError) throw dbError;
-      
-      alert('🙏 Om Shanti! Request bhej di gayi hai. Hum jald hi aapse sampark karenge.');
-      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu' });
+
+      // 2. n8n को डेटा भेजें
+      try {
+        await fetch('https://sandeep-n8n.app.n8n.cloud/webhook-test/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(insertData),
+        });
+      } catch (err) {
+        console.log("n8n call failed, but data saved to DB");
+      }
+
+      // 3. सफलता का मैसेज और फॉर्म रिसेट
+      setIsSuccess(true);
+      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '' });
       setMapFile(null);
-      e.target.reset();
+      
     } catch (error) {
       alert('Error: ' + error.message);
     } finally {
