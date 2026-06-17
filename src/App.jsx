@@ -286,17 +286,19 @@ function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isVastu && !mapFile) {
+    
+    // सुधार 1: isVastu की जगह isHeroVastu और isAstro की जगह isHeroAstro किया गया
+    if (isHeroVastu && !mapFile) {
       alert('Please upload your Floor Plan.'); return;
     }
-    if (isAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
+    if (isHeroAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
       alert('Please provide either Place of Birth OR both Latitude & Longitude.'); return;
     }
 
     setIsSubmitting(true);
     try {
       let fileUrl = null;
-      if (isVastu && mapFile) {
+      if (isHeroVastu && mapFile) {
         const fileExt = mapFile.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage.from('house_maps').upload(fileName, mapFile);
@@ -308,9 +310,9 @@ function Home() {
       const insertData = {
         name: formData.name, phone: formData.phone, email: formData.email,
         district: formData.district, state: formData.state, country: formData.country,
-        service: service,
+        service: formData.service, // सुधार 2: सिर्फ service की जगह formData.service किया गया
         ...(fileUrl && { map_url: fileUrl }),
-        ...(isAstro && { 
+        ...(isHeroAstro && { 
           dob: formData.dob || null, 
           tob: formData.tob || null, 
           pob: formData.pob || null,
@@ -335,8 +337,8 @@ function Home() {
       }
 
       // 3. सफलता का मैसेज और फॉर्म रिसेट
-      setIsSuccess(true);
-      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '' });
+      alert('Aapki request successfully submit ho gayi hai!'); // सुधार 3: setIsSuccess की जगह सीधा Alert लगा दिया 
+      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu' });
       setMapFile(null);
       
     } catch (error) {
