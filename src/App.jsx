@@ -326,15 +326,15 @@ function Home() {
       if (dbError) throw dbError;
 
       // 2. n8n को डेटा भेजें
-      try {
-        await fetch('https://sandeep-n8n.app.n8n.cloud/webhook/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(insertData),
-        });
-      } catch (err) {
-        console.log("n8n call failed, but data saved to DB");
-      }
+try {
+  await fetch('https://sandeep-n8n.app.n8n.cloud/webhook/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(insertData),
+  });
+} catch (err) {
+  console.log("n8n call failed, but data saved to DB");
+}
 
       // 3. सफलता का मैसेज और फॉर्म रिसेट
       alert('Aapki request successfully submit ho gayi hai!'); // सुधार 3: setIsSuccess की जगह सीधा Alert लगा दिया 
