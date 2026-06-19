@@ -389,30 +389,11 @@ try {
             
             {/* NEW BOLD HEADER & URGENCY BADGE */}
             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-              <div style={{ 
-                fontSize: '1.4rem', 
-                fontWeight: 900, 
-                letterSpacing: '1px', 
-                textTransform: 'uppercase', 
-                color: 'var(--gold)', 
-                marginBottom: '12px',
-                textShadow: '0 2px 4px rgba(0,0,0,0.6)' 
-              }}>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
                 Free Vastu Consultation Form
               </div>
               
-              <span style={{ 
-                backgroundColor: '#cc0000', 
-                color: '#ffffff', 
-                padding: '6px 15px', 
-                borderRadius: '4px', 
-                fontSize: '0.75rem', 
-                fontWeight: 800, 
-                letterSpacing: '1.5px', 
-                textTransform: 'uppercase', 
-                boxShadow: '0 4px 10px rgba(204, 0, 0, 0.4)',
-                display: 'inline-block'
-              }}>
+              <span style={{ backgroundColor: '#cc0000', color: '#ffffff', padding: '6px 15px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '1.5px', textTransform: 'uppercase', boxShadow: '0 4px 10px rgba(204, 0, 0, 0.4)', display: 'inline-block' }}>
                 ⏳ For Limited Period Only
               </span>
             </div>
