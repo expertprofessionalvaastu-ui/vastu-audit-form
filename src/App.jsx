@@ -640,9 +640,7 @@ try {
 <section className="contact" id="contact">
   <div className="contact-inner">
     {/* REFINED HEADER */}
-    <div className="section-tag reveal" style={{ fontSize: '0.85rem', letterSpacing: '6px', fontWeight: '600', color: 'var(--gold)', marginBottom: '15px', textTransform: 'uppercase' }}>
-      Important Note
-    </div>
+    
     <h2 className="section-title reveal">Before You <em>Consult</em></h2>
     <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
     
