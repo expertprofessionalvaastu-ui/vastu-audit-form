@@ -637,35 +637,56 @@ try {
           </div>
         </div>
       </section>
-
-      <section className="contact" id="contact">
+<section className="contact" id="contact">
         <div className="contact-inner">
           <div className="section-tag reveal">Important Note</div>
           <h2 className="section-title reveal">Before You <em>Consult</em></h2>
           <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
+          
           <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
             <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
             <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>📐 Guidelines</div>
+            
+            {/* MAIN HIGHLIGHT QUOTE */}
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
-              "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
+              "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
             </div>
+            
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
-            <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Vastu analysis ki shuruaat hoti hai ek <strong style={{ color: 'var(--cream)' }}>sahi aur to-scale floor plan</strong> se. Haath se bana naksha — chahe kitna bhi saaf ho — accurate nahi hota.
-            </p>
+          
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              Isliye consultation se pehle apna floor plan kisi <strong style={{ color: 'var(--cream)' }}>draftsman, architect ya builder</strong> se to-scale banwayein.
+              इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>draftsman, architect या builder</strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
             </p>
+            
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: '#e74c3c', fontSize: '1rem' }}>✗</span> Haath se bana rough naksha — accurate nahi</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect ka to-scale floor plan — sahi</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North direction clearly marked hona chahiye</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: '#e74c3c', fontSize: '1rem' }}>✗</span> हाथ से बना रफ़ (Rough) नक्शा — Accurate नहीं
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect का To-Scale नक्शा — 100% सही
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North Direction (उत्तर दिशा) Clearly Marked होनी चाहिए
+              </div>
             </div>
           </div>
+
           <div className="contact-options reveal">
-            <a href="https://wa.me/91XXXXXXXXXX" className="contact-card"><span className="contact-card-icon">💬</span><div className="contact-card-label">WhatsApp</div><div className="contact-card-value">DM Now</div></a>
-            <a href="#" className="contact-card"><span className="contact-card-icon">📍</span><div className="contact-card-label">Location</div><div className="contact-card-value">Dhanbad, JH</div></a>
-            <a href="https://instagram.com/sandeepinnercore" className="contact-card"><span className="contact-card-icon">🌐</span><div className="contact-card-label">Social</div><div className="contact-card-value">@sandeepinnercore</div></a>
+            <a href="https://wa.me/91XXXXXXXXXX" className="contact-card">
+              <span className="contact-card-icon">💬</span>
+              <div className="contact-card-label">WhatsApp</div>
+              <div className="contact-card-value">DM Now</div>
+            </a>
+            <a href="#" className="contact-card">
+              <span className="contact-card-icon">📍</span>
+              <div className="contact-card-label">Location</div>
+              <div className="contact-card-value">Dhanbad, JH</div>
+            </a>
+            <a href="https://instagram.com/sandeepinnercore" className="contact-card">
+              <span className="contact-card-icon">🌐</span>
+              <div className="contact-card-label">Social</div>
+              <div className="contact-card-value">@sandeepinnercore</div>
+            </a>
           </div>
         </div>
       </section>
@@ -677,9 +698,7 @@ try {
       </footer>
     </>
   );
- }
-
-
+}
 // ============================================
 // ADMIN PANEL COMPONENT (Password Protected + Image Upload)
 // ============================================
