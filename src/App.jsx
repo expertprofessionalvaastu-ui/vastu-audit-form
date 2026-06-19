@@ -655,13 +655,11 @@ try {
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
           
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>draftsman or architect </strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
+              इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>Draftsman or Architect </strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
             </p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <span style={{ color: '#e74c3c', fontSize: '1rem' }}>✗</span> हाथ से बना रफ़ (Rough) नक्शा — Accurate नहीं
-              </div>
+              
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect का To-Scale नक्शा — 100% सही
               </div>
