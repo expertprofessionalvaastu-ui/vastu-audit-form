@@ -655,7 +655,7 @@ try {
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
           
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>draftsman, architect या builder</strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
+              इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>draftsman or architect </strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
             </p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
