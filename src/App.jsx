@@ -668,6 +668,9 @@ try {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North Direction (उत्तर दिशा) Clearly Marked होनी चाहिए
               </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Underground/Overhead Water Tank, Septic Tank, और Borewell ज़रूर Mark करें
+              </div>
             </div>
           </div>
 
