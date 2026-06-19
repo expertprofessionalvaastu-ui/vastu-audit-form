@@ -537,7 +537,7 @@ try {
   
   <div className="gold-divider" style={{ margin: '0 0 30px 0', width: '60px', height: '2px', background: 'var(--gold)' }}></div>
   
-  <p className="about-text" style={{ fontSize: '3rem', lineHeight: '1.8', marginBottom: '25px' }}>
+  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px' }}>
     I am Sandeep Kumar — a Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.
   </p>
   
