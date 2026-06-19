@@ -519,31 +519,34 @@ try {
         <div className="philosophy-item"><div className="philosophy-dot"></div>No Blind Faith</div>
       </div>
 
-      {/* --- यहाँ से रिप्लेस करें --- */}
-<div className="about-content reveal" style={{ maxWidth: '850px', padding: '40px 20px', textAlign: 'left' }}>
-  
-  {/* यहाँ फॉन्ट साइज 1.1rem कर दिया है */}
-  <div className="section-tag" style={{ fontSize: '1.1rem', letterSpacing: '8px', marginBottom: '15px', color: 'var(--gold)', textTransform: 'uppercase' }}>
-    About
-  </div>
+      <section className="about" id="about">
+        <div className="about-grid">
+          <div className="about-visual reveal">
+            <div className="about-box">
+              <img src="/sandeep-pic.jpg" alt="Sandeep Kumar" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', marginBottom: '15px', border: '2px solid var(--gold)' }} />
+              <div className="about-name">Sandeep Kumar</div>
+              <div className="about-designation">Founder · The Inner Core</div>
+              <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '20px auto' }}></div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '2' }}>KP Astrologer<br/>Vastu Consultant</div>
+            </div>
+          </div>
+           <div className="about-content reveal" style={{ maxWidth: '650px', margin: '0 auto', textAlign: 'center' }}>
+       <div className="about-content reveal" style={{ maxWidth: '850px', margin: '0 auto', padding: '80px 20px', textAlign: 'left' }}>
+  <div className="about-content reveal">
+  <div className="section-tag" style={{ letterSpacing: '6px', marginBottom: '15px' }}>About</div>
   
   <div className="gold-divider" style={{ margin: '0 0 30px 0', width: '60px', height: '2px', background: 'var(--gold)' }}></div>
   
-  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px', color: 'var(--cream)' }}>
+  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px' }}>
     I am Sandeep Kumar — a Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.
   </p>
-  
-  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', color: 'var(--cream)' }}>
-    I rely on KP Astrology logic and classical Vastu principles, backed by observable data—never on superstition. I believe in results that you can measure and feel.
-  </p>
-</div>
-{/* --- यहाँ तक रिप्लेस करें --- */}
   
   <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8' }}>
     I rely on KP Astrology logic and classical Vastu principles, backed by observable data—never on superstition. I believe in results that you can measure and feel.
    </p>
-   
-
+   </div>
+  </div>
+ </div>
 
      <section className="transparency-section" style={{ padding: '60px 20px', textAlign: 'center' }}>
   <div style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -565,6 +568,8 @@ try {
       </div>
       </section>
      
+        </div>
+      </section>
 
       <section id="approach">
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
