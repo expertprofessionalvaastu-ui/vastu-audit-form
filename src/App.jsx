@@ -647,7 +647,7 @@ try {
             <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
             <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>📐 Guidelines</div>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
-              "Jaise ek doctor galat report dekh ke sahi dawai nahi de sakta — waise hum galat naksha dekh ke sahi Vastu nahi de sakte."
+              "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
             </div>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
             <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '20px' }}>
