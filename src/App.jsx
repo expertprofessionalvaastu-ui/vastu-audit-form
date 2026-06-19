@@ -47,21 +47,20 @@ function BookingModal({ service, onClose }) {
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
 // --- AUTO FILL LOCATION LOGIC ---
   useEffect(() => {
     const fetchLocationData = async () => {
       const lat = formData.latitude;
       const lon = formData.longitude;
 
-      // चेक करें कि Latitude और Longitude भरे हुए हों
-      if (lat && lon && lat.trim() !== '' && lon.trim() !== '') {
+      // Safe Check: String में कन्वर्ट करके चेक कर रहे हैं ताकि वेबसाइट क्रैश न हो
+      if (lat && lon && String(lat).trim() !== '' && String(lon).trim() !== '') {
         try {
-          // Free API को कॉल कर रहे हैं
           const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
           const data = await response.json();
 
           if (data && data.address) {
-            // डिस्ट्रिक्ट, स्टेट और कंट्री को ऑटोमेटिकली अपडेट करें
             setFormData(prev => ({
               ...prev,
               district: data.address.state_district || data.address.city || data.address.county || prev.district,
@@ -75,15 +74,14 @@ function BookingModal({ service, onClose }) {
       }
     };
 
-    // 1 सेकंड का डिले ताकि हर एक बटन दबाने पर API कॉल न हो (Typing खत्म होने का इंतज़ार)
     const delayTimer = setTimeout(() => {
       fetchLocationData();
     }, 1000);
 
     return () => clearTimeout(delayTimer);
   }, [formData.latitude, formData.longitude]);
+  // ------------------------------------
 
-  
   const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
   const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
 
