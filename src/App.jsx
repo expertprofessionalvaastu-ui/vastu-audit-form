@@ -654,7 +654,7 @@ try {
       
       {/* MAIN HIGHLIGHT QUOTE */}
       <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
-        "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
+      "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
       </div>
       
       <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
