@@ -535,9 +535,6 @@ try {
     About
   </div>
   
-  <h2 className="section-title" style={{ fontSize: '1.8rem', lineHeight: '1.2', marginBottom: '25px', color: 'var(--cream)' }}>
-    Aligning Spaces<br/>with <em>Purpose</em>
-  </h2>
   
   <div className="gold-divider" style={{ margin: '0 auto 30px auto', width: '50px', height: '1px', background: 'var(--gold)' }}></div>
   
