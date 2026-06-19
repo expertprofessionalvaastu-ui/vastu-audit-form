@@ -386,8 +386,8 @@ try {
         {/* HERO FORM */}
         <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
           <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
-            <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Schedule a Session</div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>Har consultation strictly confidential rakhi jaati hai.</p>
+            <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Free Vastu Consultation Form</div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>For Limited period Only </p>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Full Name</label>
