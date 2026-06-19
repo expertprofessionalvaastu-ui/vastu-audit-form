@@ -608,35 +608,7 @@ try {
         </div>
       </section>
 
-      <section style={{ background: 'var(--dark-2)', padding: '100px 5%' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div className="section-tag reveal">How It Works</div>
-          <h2 className="section-title reveal">Transparent <em>Process</em></h2>
-          <div style={{ maxWidth: '700px', margin: '60px auto 0', display: 'flex', flexDirection: 'column', gap: '40px' }}>
-            <div className="reveal" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
-              <div style={{ flexShrink: 0, width: '52px', height: '52px', border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--gold)' }}>1</div>
-              <div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--cream)', marginBottom: '10px' }}>Scaled Floor Plan Bhejein</div>
-                <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: 'var(--text-muted)' }}>Draftsman ya architect se banwaya to-scale floor plan bhejein — saath mein North direction clearly marked hona chahiye. Haath se bana naksha accept nahi hoga.</p>
-              </div>
-            </div>
-            <div className="reveal" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
-              <div style={{ flexShrink: 0, width: '52px', height: '52px', border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--gold)' }}>2</div>
-              <div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--cream)', marginBottom: '10px' }}>Technical Analysis</div>
-                <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: 'var(--text-muted)' }}>Aapke map pe 16-direction Vastu grid overlay karenge aur saath mein KP Astrology chart se milake complete analysis karenge.</p>
-              </div>
-            </div>
-            <div className="reveal" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
-              <div style={{ flexShrink: 0, width: '52px', height: '52px', border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--gold)' }}>3</div>
-              <div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--cream)', marginBottom: '10px' }}>Logical Consultation</div>
-                <p style={{ fontSize: '0.9rem', lineHeight: '1.8', color: 'var(--text-muted)' }}>Findings clearly explain ki jayengi — har point ke peeche logic bataya jayega. Koi blind faith nahi, koi unnecessary darr nahi. Sirf practical solutions.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 <section className="contact" id="contact">
   <div className="contact-inner">
     {/* REFINED HEADER */}
