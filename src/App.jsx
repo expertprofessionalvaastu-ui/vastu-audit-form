@@ -530,16 +530,45 @@ try {
               <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '2' }}>KP Astrologer<br/>Vastu Consultant</div>
             </div>
           </div>
-          <div className="about-content reveal">
-            <div className="section-tag">About</div>
-            <h2 className="section-title">Aligning Spaces<br/>with <em>Purpose</em></h2>
-            <div className="gold-divider" style={{ margin: '20px 0 40px' }}></div>
-            <p className="about-text">I am Sandeep Kumar — a Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.</p>
-            <p className="about-text">I do not believe in blind faith or superstition. Every recommendation I make is backed by classical Vastu Shastra principles, KP Astrology logic, and observable data.</p>
-            <div className="about-highlight">
-              "I put 100% effort into my analysis, but practically, my Astro-Vastu remedies will deliver 70% of the result. The remaining 30% to achieve the full 100% outcome depends entirely on your <em>Prarabdha Karma</em>."
-            </div>
-          </div>
+           <div className="about-content reveal" style={{ maxWidth: '650px', margin: '0 auto', textAlign: 'center' }}>
+  <div className="section-tag" style={{ fontSize: '0.75rem', letterSpacing: '4px', color: 'var(--gold)', marginBottom: '15px', textTransform: 'uppercase' }}>
+    About
+  </div>
+  
+  <h2 className="section-title" style={{ fontSize: '1.8rem', lineHeight: '1.2', marginBottom: '25px', color: 'var(--cream)' }}>
+    Aligning Spaces<br/>with <em>Purpose</em>
+  </h2>
+  
+  <div className="gold-divider" style={{ margin: '0 auto 30px auto', width: '50px', height: '1px', background: 'var(--gold)' }}></div>
+  
+     <p className="about-text" style={{ fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '20px', color: 'rgba(245, 240, 232, 0.8)' }}>
+      I am Sandeep Kumar — A Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.
+     </p>
+  
+     <p className="about-text" style={{ fontSize: '0.95rem', lineHeight: '1.7', color: 'rgba(245, 240, 232, 0.8)' }}>
+      I rely on KP Astrology logic and classical Vastu principles, backed by observable data—never on superstition.
+     </p>
+     </div>
+     <section className="transparency-section" style={{ padding: '60px 20px', textAlign: 'center' }}>
+  <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ fontSize: '0.7rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '20px' }}>
+      Honest Disclosure
+    </div>
+    <div style={{ 
+      fontFamily: "'Cormorant Garamond', serif", 
+      fontSize: '1.1rem', 
+      color: 'rgba(245, 240, 232, 0.7)', 
+      fontStyle: 'italic', 
+      lineHeight: '1.8',
+      borderTop: '1px solid rgba(201, 168, 76, 0.2)',
+      borderBottom: '1px solid rgba(201, 168, 76, 0.2)',
+      padding: '20px 0'
+    }}>
+      "I put 100% effort into my analysis, but practically, my Astro-Vastu remedies will deliver 70% of the result. The remaining 30% to achieve the full 100% outcome depends entirely on your <em>Prarabdha Karma</em>."
+      </div>
+      </div>
+      </section>
+     
         </div>
       </section>
 
