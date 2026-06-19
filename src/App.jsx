@@ -420,7 +420,7 @@ try {
           <h1 className="hero-title"><em>Vastu Samadhan</em></h1>
           <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
           <div className="hero-divider" style={{ margin: '20px 0' }}></div>
-          <p className="hero-desc" style={{ maxWidth: '90%' }}>Where ancient wisdom meets modern logic. Decoding your spaces and life through data, Vastu Shastra, and KP Astrology — to align your environment with your true potential.</p>
+          <p className="hero-desc" style={{ maxWidth: '90%' }}>"Where ancient wisdom meets modern logic. Decoding your spaces and life through the Five Elements, Trigun, and Tridosh — aligning your environment with your true potential."</p>
           <div className="hero-cta" style={{ justifyContent: 'flex-start', marginTop: '30px' }}>
             <a href="#approach" className="btn-secondary">Explore Our Approach</a>
           </div>
