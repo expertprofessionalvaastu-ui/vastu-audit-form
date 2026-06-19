@@ -531,7 +531,7 @@ try {
             </div>
           </div>
            <div className="about-content reveal" style={{ maxWidth: '650px', margin: '0 auto', textAlign: 'center' }}>
-  <div className="section-tag" style={{ fontSize: '0.75rem', letterSpacing: '4px', color: 'var(--gold)', marginBottom: '15px', textTransform: 'uppercase' }}>
+  <div className="section-tag" style={{ fontSize: '0.94rem', letterSpacing: '4px', color: 'var(--gold)', marginBottom: '15px', textTransform: 'uppercase' }}>
     About
   </div>
   
