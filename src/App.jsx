@@ -47,7 +47,43 @@ function BookingModal({ service, onClose }) {
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+// --- AUTO FILL LOCATION LOGIC ---
+  useEffect(() => {
+    const fetchLocationData = async () => {
+      const lat = formData.latitude;
+      const lon = formData.longitude;
 
+      // चेक करें कि Latitude और Longitude भरे हुए हों
+      if (lat && lon && lat.trim() !== '' && lon.trim() !== '') {
+        try {
+          // Free API को कॉल कर रहे हैं
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+          const data = await response.json();
+
+          if (data && data.address) {
+            // डिस्ट्रिक्ट, स्टेट और कंट्री को ऑटोमेटिकली अपडेट करें
+            setFormData(prev => ({
+              ...prev,
+              district: data.address.state_district || data.address.city || data.address.county || prev.district,
+              state: data.address.state || prev.state,
+              country: data.address.country || prev.country
+            }));
+          }
+        } catch (error) {
+          console.log('Location fetch error:', error);
+        }
+      }
+    };
+
+    // 1 सेकंड का डिले ताकि हर एक बटन दबाने पर API कॉल न हो (Typing खत्म होने का इंतज़ार)
+    const delayTimer = setTimeout(() => {
+      fetchLocationData();
+    }, 1000);
+
+    return () => clearTimeout(delayTimer);
+  }, [formData.latitude, formData.longitude]);
+
+  
   const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
   const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
 
@@ -178,28 +214,29 @@ function BookingModal({ service, onClose }) {
               </div>
               
               <div style={{ background: 'rgba(201,168,76,0.03)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(201,168,76,0.1)' }}>
-                {/* HORIZONTAL ROW FOR POB OR COORDS */}
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
+                
+                {/* HORIZONTAL ROW FOR POB & COORDS */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   
-                  {/* POB Column */}
-                  <div style={{ flex: 1.2, opacity: isPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                  {/* Place of Birth */}
+                  <div style={{ flex: 1.5, opacity: isPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                     <label style={labelStyle}>Place of Birth</label>
                     <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isPobDisabled} placeholder="City, State" style={{ ...inputStyle, cursor: isPobDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isPobDisabled} />
                   </div>
 
-                  {/* OR Divider */}
-                  <div style={{ paddingBottom: '12px', fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '1px', fontWeight: 'bold' }}>OR</div>
+                  {/* OR TEXT */}
+                  <div style={{ fontSize: '0.65rem', color: '#C9A84C', fontWeight: 'bold', paddingTop: '15px' }}>OR</div>
 
-                  {/* Coordinates Column */}
-                  <div style={{ flex: 1.5, display: 'flex', gap: '8px', opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
-                    <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>Latitude</label>
-                      <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 23.79" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>Longitude</label>
-                      <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 86.43" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
-                    </div>
+                  {/* Latitude */}
+                  <div style={{ flex: 1, opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                    <label style={labelStyle}>Latitude</label>
+                    <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 23.79" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                  </div>
+
+                  {/* Longitude */}
+                  <div style={{ flex: 1, opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                    <label style={labelStyle}>Longitude</label>
+                    <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 86.43" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
                   </div>
 
                 </div>
@@ -654,7 +691,7 @@ try {
       </footer>
     </>
   );
-}
+ }
 }
 
 // ============================================
