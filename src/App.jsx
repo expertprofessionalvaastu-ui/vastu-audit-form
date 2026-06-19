@@ -532,26 +532,21 @@ try {
           </div>
            <div className="about-content reveal" style={{ maxWidth: '650px', margin: '0 auto', textAlign: 'center' }}>
        <div className="about-content reveal" style={{ maxWidth: '850px', margin: '0 auto', padding: '80px 20px', textAlign: 'left' }}>
-  <div className="section-tag" style={{ fontSize: '0.9rem', letterSpacing: '8px', color: 'var(--gold)', marginBottom: '20px', textTransform: 'uppercase' }}>
-    About
-  </div>
+  <div className="about-content reveal">
+  <div className="section-tag" style={{ letterSpacing: '6px', marginBottom: '15px' }}>About</div>
   
-  <h2 className="section-title" style={{ fontSize: '2.5rem', lineHeight: '1.1', marginBottom: '35px', color: 'var(--cream)' }}>
-    Sandeep Kumar <br/>
-    <span style={{ fontSize: '1.5rem', color: 'rgba(245,240,232,0.6)', fontWeight: '300' }}>Professional Astro-Vastu Consultant</span>
-  </h2>
+  <div className="gold-divider" style={{ margin: '0 0 30px 0', width: '60px', height: '2px', background: 'var(--gold)' }}></div>
   
-  <div className="gold-divider" style={{ margin: '0 0 40px 0', width: '80px', height: '2px', background: 'var(--gold)' }}></div>
-  
-  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px', color: 'rgba(245, 240, 232, 0.9)' }}>
-    I bridge the gap between ancient Indian sciences and the modern, logical mind. My approach is rooted in precision, ensuring that your space is not just 'vastu-compliant' but truly aligned with your life's goals.
+  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px' }}>
+    I am Sandeep Kumar — a Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.
   </p>
   
-  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '40px', color: 'rgba(245, 240, 232, 0.9)' }}>
+  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8' }}>
     I rely on KP Astrology logic and classical Vastu principles, backed by observable data—never on superstition. I believe in results that you can measure and feel.
-  </p>
+   </p>
    </div>
-    </div>
+  </div>
+ </div>
 
      <section className="transparency-section" style={{ padding: '60px 20px', textAlign: 'center' }}>
   <div style={{ maxWidth: '600px', margin: '0 auto' }}>
