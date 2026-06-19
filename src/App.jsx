@@ -39,6 +39,7 @@ function Navbar() {
 
 // ============================================
 // BOOKING MODAL COMPONENT (Pop-up Form)
+// BOOKING MODAL COMPONENT (Pop-up Form)
 // ============================================
 function BookingModal({ service, onClose }) {
   const [formData, setFormData] = useState({
@@ -48,13 +49,12 @@ function BookingModal({ service, onClose }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-// --- AUTO FILL LOCATION LOGIC ---
+  // --- AUTO FILL LOCATION LOGIC ---
   useEffect(() => {
     const fetchLocationData = async () => {
       const lat = formData.latitude;
       const lon = formData.longitude;
 
-      // Safe Check: String में कन्वर्ट करके चेक कर रहे हैं ताकि वेबसाइट क्रैश न हो
       if (lat && lon && String(lat).trim() !== '' && String(lon).trim() !== '') {
         try {
           const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
@@ -80,8 +80,8 @@ function BookingModal({ service, onClose }) {
 
     return () => clearTimeout(delayTimer);
   }, [formData.latitude, formData.longitude]);
-  // ------------------------------------
 
+  // --- LOGIC VARIABLES ---
   const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
   const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
 
@@ -91,6 +91,7 @@ function BookingModal({ service, onClose }) {
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setMapFile(e.target.files[0]);
 
+  // --- SUBMIT HANDLER ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isVastu && !mapFile) {
@@ -137,6 +138,7 @@ function BookingModal({ service, onClose }) {
     }
   };
 
+  // --- STYLES ---
   const overlayStyle = {
     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
     background: 'rgba(0,0,0,0.85)', zIndex: 10000, 
@@ -161,6 +163,7 @@ function BookingModal({ service, onClose }) {
     transition: 'all 0.3s ease'
   };
 
+  // --- SUCCESS SCREEN ---
   if (isSuccess) {
     return (
       <div style={overlayStyle} onClick={onClose}>
@@ -180,22 +183,20 @@ function BookingModal({ service, onClose }) {
     );
   }
 
+  // --- FORM SCREEN ---
   return (
     <div style={overlayStyle} onClick={onClose}>
       <div style={modalStyle} onClick={e => e.stopPropagation()}>
         
-        {/* CLOSE BUTTON */}
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           ✕
         </button>
 
-        {/* HEADER */}
         <div style={{ fontSize: '0.7rem', letterSpacing: '4px', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '6px', textAlign: 'center' }}>Book Session</div>
         <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: '#f5f0e8', textAlign: 'center', marginBottom: '6px' }}>{service}</h3>
         <p style={{ fontSize: '0.78rem', color: 'rgba(245,240,232,0.45)', textAlign: 'center', marginBottom: '24px' }}>Har consultation strictly confidential rakhi jaati hai.</p>
         <div style={{ width: '40px', height: '1px', background: 'rgba(201,168,76,0.4)', margin: '0 auto 24px' }}></div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           
           <div>
@@ -203,7 +204,6 @@ function BookingModal({ service, onClose }) {
             <input type="text" name="name" value={formData.name} onChange={handleChange} style={inputStyle} required />
           </div>
           
-          {/* ASTROLOGY FIELDS */}
           {isAstro && (
             <>
               <div style={{ display: 'flex', gap: '12px' }}>
@@ -212,37 +212,27 @@ function BookingModal({ service, onClose }) {
               </div>
               
               <div style={{ background: 'rgba(201,168,76,0.03)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(201,168,76,0.1)' }}>
-                
-                {/* HORIZONTAL ROW FOR POB & COORDS */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  
-                  {/* Place of Birth */}
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
                   <div style={{ flex: 1.5, opacity: isPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                     <label style={labelStyle}>Place of Birth</label>
                     <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isPobDisabled} placeholder="City, State" style={{ ...inputStyle, cursor: isPobDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isPobDisabled} />
                   </div>
-
-                  {/* OR TEXT */}
-                  <div style={{ fontSize: '0.65rem', color: '#C9A84C', fontWeight: 'bold', paddingTop: '15px' }}>OR</div>
-
-                  {/* Latitude */}
-                  <div style={{ flex: 1, opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
-                    <label style={labelStyle}>Latitude</label>
-                    <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 23.79" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                  <div style={{ paddingBottom: '12px', fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '1px', fontWeight: 'bold' }}>OR</div>
+                  <div style={{ flex: 1.5, display: 'flex', gap: '8px', opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Latitude</label>
+                      <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 23.79" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Longitude</label>
+                      <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 86.43" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                    </div>
                   </div>
-
-                  {/* Longitude */}
-                  <div style={{ flex: 1, opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
-                    <label style={labelStyle}>Longitude</label>
-                    <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 86.43" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
-                  </div>
-
                 </div>
               </div>
             </>
           )}
 
-          {/* LOCATION FIELDS */}
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}><label style={labelStyle}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} style={inputStyle} required /></div>
             <div style={{ flex: 1 }}><label style={labelStyle}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} style={inputStyle} required /></div>
@@ -252,13 +242,11 @@ function BookingModal({ service, onClose }) {
             <input type="text" name="country" value={formData.country} onChange={handleChange} style={inputStyle} required />
           </div>
 
-          {/* CONTACT FIELDS */}
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}><label style={labelStyle}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} style={inputStyle} required /></div>
             <div style={{ flex: 1 }}><label style={labelStyle}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} style={inputStyle} required /></div>
           </div>
 
-          {/* VASTU FIELDS */}
           {isVastu && (
             <>
               <div style={{ width: '100%', height: '1px', background: 'rgba(201,168,76,0.2)', margin: '4px 0' }}></div>
@@ -269,7 +257,6 @@ function BookingModal({ service, onClose }) {
             </>
           )}
 
-          {/* SUBMIT BUTTON */}
           <button type="submit" disabled={isSubmitting} style={{ marginTop: '8px', width: '100%', padding: '13px', background: isSubmitting ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.85rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
             {isSubmitting ? 'Submitting...' : 'Book Consultation'}
           </button>
@@ -278,6 +265,7 @@ function BookingModal({ service, onClose }) {
       </div>
     </div>
   );
+}
 
 // ============================================
 // HOME PAGE COMPONENT (The Main Website)
@@ -690,7 +678,7 @@ try {
     </>
   );
  }
-}
+
 
 // ============================================
 // ADMIN PANEL COMPONENT (Password Protected + Image Upload)
