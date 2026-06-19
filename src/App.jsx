@@ -383,11 +383,41 @@ try {
           </div>
         </div>
 
-        {/* HERO FORM */}
+       {/* HERO FORM */}
         <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
           <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
-            <div style={{ fontSize: '0.8rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px', textAlign: 'center', fontWeight: 'bold' }}>Free Vastu Consultation Form</div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '24px', textAlign: 'center' }}>For Limited period Only </p>
+            
+            {/* NEW BOLD HEADER & URGENCY BADGE */}
+            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+              <div style={{ 
+                fontSize: '1.4rem', 
+                fontWeight: 900, 
+                letterSpacing: '1px', 
+                textTransform: 'uppercase', 
+                color: 'var(--gold)', 
+                marginBottom: '12px',
+                textShadow: '0 2px 4px rgba(0,0,0,0.6)' 
+              }}>
+                Free Vastu Consultation Form
+              </div>
+              
+              <span style={{ 
+                backgroundColor: '#cc0000', 
+                color: '#ffffff', 
+                padding: '6px 15px', 
+                borderRadius: '4px', 
+                fontSize: '0.75rem', 
+                fontWeight: 800, 
+                letterSpacing: '1.5px', 
+                textTransform: 'uppercase', 
+                boxShadow: '0 4px 10px rgba(204, 0, 0, 0.4)',
+                display: 'inline-block'
+              }}>
+                ⏳ For Limited Period Only
+              </span>
+            </div>
+            {/* END NEW BOLD HEADER */}
+
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Full Name</label>
