@@ -638,39 +638,47 @@ try {
         </div>
       </section>
 <section className="contact" id="contact">
-        <div className="contact-inner">
-          <div className="section-tag reveal">Important Note</div>
-          <h2 className="section-title reveal">Before You <em>Consult</em></h2>
-          <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
-          
-          <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
-            <div style={{ fontSize: '0.72rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>📐 Guidelines</div>
-            
-            {/* MAIN HIGHLIGHT QUOTE */}
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
-              "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
-            </div>
-            
-            <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
-          
-            <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>Draftsman or Architect </strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
-            </p>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect का To-Scale नक्शा — 100% सही
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North Direction (उत्तर दिशा) Clearly Marked होनी चाहिए
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Underground/Overhead Water Tank, Septic Tank, और Borewell ज़रूर Mark करें
-              </div>
-            </div>
-          </div>
+  <div className="contact-inner">
+    {/* REFINED HEADER */}
+    <div className="section-tag reveal" style={{ fontSize: '0.85rem', letterSpacing: '6px', fontWeight: '600', color: 'var(--gold)', marginBottom: '15px', textTransform: 'uppercase' }}>
+      Important Note
+    </div>
+    <h2 className="section-title reveal">Before You <em>Consult</em></h2>
+    <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
+    
+    <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
+      <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
+      
+      {/* REFINED GUIDELINES TAG */}
+      <div style={{ fontSize: '0.85rem', letterSpacing: '5px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '20px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <span style={{ fontSize: '1rem' }}>📐</span> Guidelines
+      </div>
+      
+      {/* MAIN HIGHLIGHT QUOTE */}
+      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
+        "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
+      </div>
+      
+      <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
+    
+      <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
+        इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>Draftsman or Architect</strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
+      </p>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect का To-Scale नक्शा — 100% सही
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North Direction (उत्तर दिशा) Clearly Marked होनी चाहिए
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Underground/Overhead Water Tank, Septic Tank, और Borewell ज़रूर Mark करें
+        </div>
+      </div>
+    </div>
+  
+
 
           <div className="contact-options reveal">
             <a href="https://wa.me/91XXXXXXXXXX" className="contact-card">
