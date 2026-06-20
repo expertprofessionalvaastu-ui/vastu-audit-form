@@ -691,7 +691,7 @@ try {
               <div className="contact-card-label">Location</div>
               <div className="contact-card-value">Dhanbad, JH</div>
             </a>
-            <a href="https://instagram.com/sandeepinnercore" className="contact-card">
+            <a href="https://instagram.com/astrovastusandeep" className="contact-card">
               <span className="contact-card-icon">🌐</span>
               <div className="contact-card-label">Social</div>
               <div className="contact-card-value">@sandeepinnercore</div>
