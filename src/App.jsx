@@ -694,7 +694,7 @@ try {
             </a>
            <a href="https://instagram.com/astrovastusandeep" className="contact-card" target="_blank" rel="noreferrer">
            <span className="contact-card-icon">
-           <FaInstagram size={28} /> {/* यहाँ आइकन आ जाएगा */}
+           <FaInstagram size={28} style={{ color: 'var(--gold)', marginBottom: '10px' }} />
            </span>
            <div className="contact-card-label">Instagram</div>
            <div className="contact-card-value">@astrovastusandeep</div>
