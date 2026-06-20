@@ -662,9 +662,11 @@ try {
       
       <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
     
-      <p style={{ fontSize: '0.92rem', lineHeight: '1.9', color: 'var(--text-muted)', marginBottom: '24px' }}>
-        इसलिए consultation से पहले अपना floor plan किसी <strong style={{ color: 'var(--cream)' }}>Draftsman or Architect</strong> से ही बनवाएं। हाथ से बना नक्शा—चाहे कितना भी साफ़ हो—accurate नहीं होता।
-      </p>
+      <p style={{ color: 'rgba(245, 240, 232, 0.8)', lineHeight: '1.7', fontSize: '1rem' }}>
+    परामर्श (Consultation) से पहले अपना फ्लोर प्लान किसी ड्राफ्ट्समैन (Draftsman) या आर्किटेक्ट से ही तैयार करवाएं। 
+    हाथ से बनाया हुआ नक्शा—चाहे कितना भी साफ़ क्यों न हो—अधूरा होता है। वास्तु शास्त्र में प्लॉट, घर की लंबाई-चौड़ाई 
+    और सटीक दिशाओं (Exact Dimensions) का बहुत महत्व है, इसलिए एक 'To-Scale' नक्शा ही मेरे सटीक विश्लेषण का आधार बनता है।
+  </p>
       
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
