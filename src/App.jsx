@@ -694,7 +694,7 @@ try {
             <a href="https://instagram.com/astrovastusandeep" className="contact-card">
               <span className="contact-card-icon">🌐</span>
               <div className="contact-card-label">Social</div>
-              <div className="contact-card-value">@sandeepinnercore</div>
+              <div className="contact-card-value">@astrovastusandeep</div>
             </a>
           </div>
         </div>
