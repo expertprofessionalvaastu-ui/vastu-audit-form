@@ -548,25 +548,27 @@ try {
   </div>
  </div>
 
-     <section className="transparency-section" style={{ padding: '60px 20px', textAlign: 'center' }}>
-  <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-    <div style={{ fontSize: '0.7rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '20px' }}>
+     <section className="transparency-section" style={{ padding: '80px 20px', textAlign: 'center' }}>
+  <div style={{ maxWidth: '850px', margin: '0 auto' }}> {/* Width 600px से 850px की */}
+    
+    <div style={{ fontSize: '0.9rem', letterSpacing: '8px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '30px', fontWeight: '600' }}>
       Honest Disclosure
     </div>
+    
     <div style={{ 
       fontFamily: "'Cormorant Garamond', serif", 
-      fontSize: '1.1rem', 
-      color: 'rgba(245, 240, 232, 0.7)', 
+      fontSize: '1.5rem', // फॉन्ट साइज 1.1rem से बढ़ाकर 1.5rem किया
+      color: 'rgba(245, 240, 232, 0.9)', 
       fontStyle: 'italic', 
-      lineHeight: '1.8',
-      borderTop: '1px solid rgba(201, 168, 76, 0.2)',
-      borderBottom: '1px solid rgba(201, 168, 76, 0.2)',
-      padding: '20px 0'
+      lineHeight: '1.6',
+      borderTop: '1px solid rgba(201, 168, 76, 0.3)',
+      borderBottom: '1px solid rgba(201, 168, 76, 0.3)',
+      padding: '30px 0'
     }}>
       "I put 100% effort into my analysis, but practically, my Astro-Vastu remedies will deliver 70% of the result. The remaining 30% to achieve the full 100% outcome depends entirely on your <em>Prarabdha Karma</em>."
-      </div>
-      </div>
-      </section>
+    </div>
+  </div>
+</section>
      
         </div>
       </section>
