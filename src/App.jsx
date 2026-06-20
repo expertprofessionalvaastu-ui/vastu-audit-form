@@ -594,7 +594,7 @@ try {
         </div>
       </section>
 
-      <section className="services" id="services">
+     {/* <section className="services" id="services">
         <div className="services-header reveal">
           <div className="section-tag">Services</div>
           <h2 className="section-title">How I Can <em>Help You</em></h2>
@@ -636,7 +636,7 @@ try {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
 
       
 <section className="contact" id="contact">
