@@ -1,3 +1,4 @@
+import { FaInstagram } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
@@ -691,11 +692,13 @@ try {
               <div className="contact-card-label">Location</div>
               <div className="contact-card-value">Dhanbad, JH</div>
             </a>
-            <a href="https://instagram.com/astrovastusandeep" className="contact-card">
-              <span className="contact-card-icon">🌐</span>
-              <div className="contact-card-label">Social</div>
-              <div className="contact-card-value">@astrovastusandeep</div>
-            </a>
+           <a href="https://instagram.com/astrovastusandeep" className="contact-card" target="_blank" rel="noreferrer">
+           <span className="contact-card-icon">
+           <FaInstagram size={28} /> {/* यहाँ आइकन आ जाएगा */}
+           </span>
+           <div className="contact-card-label">Instagram</div>
+           <div className="contact-card-value">@astrovastusandeep</div>
+          </a>
           </div>
         </div>
       </section>

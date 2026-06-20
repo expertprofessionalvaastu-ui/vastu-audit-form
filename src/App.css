@@ -182,3 +182,42 @@
     border-right-color: var(--border);
   }
 }
+
+/* Contact Card Styling */
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: rgba(20, 20, 20, 0.8); /* हल्का डार्क बैकग्राउंड */
+  border: 1px solid rgba(201, 168, 76, 0.2); /* गोल्ड बॉर्डर */
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover effect: जब माउस ऊपर जाएगा तो गोल्ड चमक आएगी */
+.contact-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-5px);
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.contact-card-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.contact-card-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+
+.contact-card-value {
+  color: rgba(245, 240, 232, 0.9);
+  font-size: 0.95rem;
+}
