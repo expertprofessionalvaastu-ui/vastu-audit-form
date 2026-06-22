@@ -278,3 +278,10 @@
 
   .logo-text { font-size: 1.8rem !important; } /* मोबाइल पर छोटा लोगो */
 }
+
+.navbar {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background-color: rgba(12, 12, 12, 1) !important; /* इसे एक बार solid रंग देकर देखें */
+}
