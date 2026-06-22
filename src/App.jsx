@@ -1,66 +1,42 @@
-import React, { useState, useEffect } from 'react';
 import { FaInstagram } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // ============================================
 // SHARED NAVBAR COMPONENT (Fixed & Centered)
 // ============================================
-// ✅ सही और फिक्स किया हुआ Navbar फंक्शन
 function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 9999,
       background: 'rgba(12, 12, 12, 0.98)', backdropFilter: 'blur(12px)',
       borderBottom: '1px solid rgba(201,168,76,0.15)',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '16px 5%', boxSizing: 'border-box'
+      padding: '16px 5%', boxSizing: 'border-box', transition: 'all 0.3s ease'
     }}>
-      <Link to="/" style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}>
-        <div className="logo-text" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.8rem', color: '#C9A84C' }}>
-          The Inner Core
+      {/* Empty Left Space to balance the center */}
+      <div style={{ flex: 1 }}></div>
+
+      {/* Centered Logo (SIZE INCREASED HERE) */}
+      <Link to="/" style={{ flex: 1, textAlign: 'center', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '5rem', color: '#C9A84C', lineHeight: '1' }}>
+          The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
         </div>
       </Link>
 
-      {/* Hamburger Icon - मोबाइल पर दिखेगा */}
-      <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)} 
-           style={{ cursor: 'pointer', fontSize: '28px', color: '#C9A84C' }}>
-        ☰
+      {/* Right Navigation Links */}
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+        <ul className="nav-links" style={{ display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' }}>
+          <li><a href="/#about">About</a></li>
+          <li><Link to="/blog">Journal</Link></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
       </div>
-
-      {/* Nav Links */}
-      <ul className={`nav-links ${isMenuOpen ? 'show' : ''}`} style={{ 
-        display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' 
-      }}>
-        <li><a href="/#about">About</a></li>
-        <li><Link to="/blog">Journal</Link></li>
-        <li><a href="/#services">Services</a></li>
-        <li><a href="/#contact">Contact</a></li>
-      </ul>
     </nav>
   );
 }
-// 1. स्टेट ऐड करें (App.jsx के टॉप पर)
-const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-// 2. Navbar के अंदर यह बटन डालें
-<nav className="navbar">
-  <div className="logo">The Inner Core</div>
-  
-  {/* यह है मोबाइल के लिए बटन */}
-  <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-    ☰
-  </div>
-
-  {/* अपने मौजूदा nav-links को इस तरह रैप करें */}
-  <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    {/* बाकी लिंक्स */}
-  </div>
-</nav>
 
 // ============================================
 // BOOKING MODAL COMPONENT (Pop-up Form)
@@ -389,32 +365,25 @@ function Home() {
         }),
       };
 
-  // ... Supabase insert वाला कोड इसके ऊपर होगा ...
-
-      // 2. n8n को डेटा भेजें
-      try {
-        const response = await fetch('https://sandeep-n8n.app.n8n.cloud/webhook/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(insertData),
-        });
-        
-        if (!response.ok) {
-          console.log("n8n responded with status:", response.status);
-        } else {
-          console.log("Data successfully sent to n8n");
-        }
-      } catch (err) {
-        console.error("n8n call failed:", err);
-      }
-
+  // 2. n8n को डेटा भेजें
+try {
+  const response = await fetch('https://sandeep-n8n.app.n8n.cloud/webhook/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(insertData),
+  });
+  
+  if (!response.ok) {
+    console.log("n8n responded with status:", response.status);
+  } else {
+    console.log("Data successfully sent to n8n");
+  }
+} catch (err) {
+  console.error("n8n call failed:", err);
+}
       // 3. सफलता का मैसेज और फॉर्म रिसेट
-      alert('Aapki request successfully submit ho gayi hai!'); 
-      setFormData({ 
-        name: '', phone: '', email: '', district: '', state: '', 
-        country: '', dob: '', tob: '', pob: '', latitude: '', 
-        longitude: '', service: 'Residential Vastu' 
-      });
+      alert('Aapki request successfully submit ho gayi hai!'); // सुधार 3: setIsSuccess की जगह सीधा Alert लगा दिया 
+      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu' });
       setMapFile(null);
       
     } catch (error) {
