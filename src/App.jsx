@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 // ============================================
 // SHARED NAVBAR COMPONENT (Fixed & Centered)
 // ============================================
+// ✅ सही और फिक्स किया हुआ Navbar फंक्शन
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -17,19 +18,19 @@ function Navbar() {
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '16px 5%', boxSizing: 'border-box'
     }}>
-      {/* Logo */}
       <Link to="/" style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}>
-        <div className="logo-text" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', color: '#C9A84C' }}>
+        <div className="logo-text" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.8rem', color: '#C9A84C' }}>
           The Inner Core
         </div>
       </Link>
 
-      {/* Hamburger Button (मोबाइल पर दिखेगा) */}
-      <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)} style={{ display: 'none', cursor: 'pointer', fontSize: '28px', color: '#C9A84C' }}>
+      {/* Hamburger Icon - मोबाइल पर दिखेगा */}
+      <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)} 
+           style={{ cursor: 'pointer', fontSize: '28px', color: '#C9A84C' }}>
         ☰
       </div>
 
-      {/* Navigation Links */}
+      {/* Nav Links */}
       <ul className={`nav-links ${isMenuOpen ? 'show' : ''}`} style={{ 
         display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' 
       }}>
@@ -41,7 +42,6 @@ function Navbar() {
     </nav>
   );
 }
-
 // 1. स्टेट ऐड करें (App.jsx के टॉप पर)
 const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -937,4 +937,3 @@ export default function App() {
     </Router>
   );
 }
-
