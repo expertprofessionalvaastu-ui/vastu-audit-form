@@ -221,3 +221,23 @@
   color: rgba(245, 240, 232, 0.9);
   font-size: 0.95rem;
 }
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 100px 20px !important; /* साइड से थोड़ा पैडिंग कम कर दी */
+    text-align: center !important;
+  }
+  
+  .hero-content {
+    flex: 1 1 100% !important; /* मोबाइल पर पूरा चौड़ा हो जाए */
+  }
+
+  .hero-title {
+    font-size: 2.2rem !important; /* मोबाइल के हिसाब से फॉन्ट छोटा किया */
+  }
+
+  .hero-desc {
+    max-width: 100% !important; /* पूरी चौड़ाई ले */
+    font-size: 0.9rem !important;
+  }
+}
