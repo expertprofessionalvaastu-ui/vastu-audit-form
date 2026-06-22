@@ -241,3 +241,40 @@
     font-size: 0.9rem !important;
   }
 }
+
+/* डेस्कटॉप पर मेनू दिखे, मोबाइल पर नहीं */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* मोबाइल पर मेनू छिपाया */
+  }
+  
+  /* मोबाइल के लिए छोटा लोगो */
+  .logo {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ... आपकी पुरानी सारी CSS यहाँ खत्म हो रही होगी ... */
+
+/* Mobile Responsive Menu Fix */
+@media (max-width: 768px) {
+  .hamburger { display: block !important; }
+  
+  .nav-links {
+    display: none !important; /* शुरुआत में छिपाएं */
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 100%;
+    background: rgba(12, 12, 12, 0.95);
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+  }
+
+  .nav-links.show {
+    display: flex !important; /* बटन दबाने पर दिखाएं */
+  }
+
+  .logo-text { font-size: 1.8rem !important; } /* मोबाइल पर छोटा लोगो */
+}

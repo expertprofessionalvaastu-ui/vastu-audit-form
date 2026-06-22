@@ -7,36 +7,60 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 // SHARED NAVBAR COMPONENT (Fixed & Centered)
 // ============================================
 function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 9999,
       background: 'rgba(12, 12, 12, 0.98)', backdropFilter: 'blur(12px)',
       borderBottom: '1px solid rgba(201,168,76,0.15)',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '16px 5%', boxSizing: 'border-box', transition: 'all 0.3s ease'
+      padding: '16px 5%', boxSizing: 'border-box'
     }}>
-      {/* Empty Left Space to balance the center */}
-      <div style={{ flex: 1 }}></div>
-
-      {/* Centered Logo (SIZE INCREASED HERE) */}
-      <Link to="/" style={{ flex: 1, textAlign: 'center', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '5rem', color: '#C9A84C', lineHeight: '1' }}>
-          The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
+      {/* Logo */}
+      <Link to="/" style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}>
+        <div className="logo-text" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', color: '#C9A84C' }}>
+          The Inner Core
         </div>
       </Link>
 
-      {/* Right Navigation Links */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-        <ul className="nav-links" style={{ display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' }}>
-          <li><a href="/#about">About</a></li>
-          <li><Link to="/blog">Journal</Link></li>
-          <li><a href="/#services">Services</a></li>
-          <li><a href="/#contact">Contact</a></li>
-        </ul>
+      {/* Hamburger Button (मोबाइल पर दिखेगा) */}
+      <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)} style={{ display: 'none', cursor: 'pointer', fontSize: '28px', color: '#C9A84C' }}>
+        ☰
       </div>
+
+      {/* Navigation Links */}
+      <ul className={`nav-links ${isMenuOpen ? 'show' : ''}`} style={{ 
+        display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' 
+      }}>
+        <li><a href="/#about">About</a></li>
+        <li><Link to="/blog">Journal</Link></li>
+        <li><a href="/#services">Services</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
     </nav>
   );
 }
+
+// 1. स्टेट ऐड करें (App.jsx के टॉप पर)
+const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+// 2. Navbar के अंदर यह बटन डालें
+<nav className="navbar">
+  <div className="logo">The Inner Core</div>
+  
+  {/* यह है मोबाइल के लिए बटन */}
+  <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+    ☰
+  </div>
+
+  {/* अपने मौजूदा nav-links को इस तरह रैप करें */}
+  <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    {/* बाकी लिंक्स */}
+  </div>
+</nav>
 
 // ============================================
 // BOOKING MODAL COMPONENT (Pop-up Form)
