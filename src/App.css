@@ -1,256 +1,41 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+:root {
+  --gold: #C9A84C;
+  --dark: #0D0D0D;
+  --text: #D4C5A9;
 }
 
-.hero {
-  position: relative;
+body { background: var(--dark); color: var(--text); margin: 0; font-family: sans-serif; }
 
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
-
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
-}
-
-/* Contact Card Styling */
-.contact-card {
-  display: flex;
-  flex-direction: column;
+.navbar {
+  display: flex !important;
+  justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: rgba(20, 20, 20, 0.8); /* हल्का डार्क बैकग्राउंड */
-  border: 1px solid rgba(201, 168, 76, 0.2); /* गोल्ड बॉर्डर */
-  border-radius: 10px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  padding: 20px 5%;
+  background: rgba(12, 12, 12, 0.98);
+  position: fixed;
+  width: 100%;
+  z-index: 9999;
 }
 
-/* Hover effect: जब माउस ऊपर जाएगा तो गोल्ड चमक आएगी */
-.contact-card:hover {
-  border-color: var(--gold);
-  transform: translateY(-5px);
-  background: rgba(201, 168, 76, 0.05);
-}
+.logo-text { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--gold); }
 
-.contact-card-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a { color: var(--text); text-decoration: none; text-transform: uppercase; font-size: 0.8rem; }
 
-.contact-card-label {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--gold);
-  margin-bottom: 5px;
-}
-
-.contact-card-value {
-  color: rgba(245, 240, 232, 0.9);
-  font-size: 0.95rem;
-}
+.hamburger { display: none; cursor: pointer; font-size: 28px; color: var(--gold); }
 
 @media (max-width: 768px) {
-  .hero {
-    padding: 100px 20px !important; /* साइड से थोड़ा पैडिंग कम कर दी */
-    text-align: center !important;
-  }
-  
-  .hero-content {
-    flex: 1 1 100% !important; /* मोबाइल पर पूरा चौड़ा हो जाए */
-  }
-
-  .hero-title {
-    font-size: 2.2rem !important; /* मोबाइल के हिसाब से फॉन्ट छोटा किया */
-  }
-
-  .hero-desc {
-    max-width: 100% !important; /* पूरी चौड़ाई ले */
-    font-size: 0.9rem !important;
-  }
-}
-
-/* डेस्कटॉप पर मेनू दिखे, मोबाइल पर नहीं */
-@media (max-width: 768px) {
+  .hamburger { display: block !important; }
   .nav-links {
-    display: none; /* मोबाइल पर मेनू छिपाया */
+    display: none !important;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #000;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
   }
-  
-  /* मोबाइल के लिए छोटा लोगो */
-  .logo {
-    font-size: 1.2rem !important;
-  }
+  .nav-links.show { display: flex !important; }
 }
-
