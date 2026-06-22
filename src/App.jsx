@@ -1,5 +1,5 @@
-import { FaInstagram } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
+import { FaInstagram } from 'react-icons/fa';
 import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
