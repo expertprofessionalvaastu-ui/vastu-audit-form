@@ -365,6 +365,13 @@ function Home() {
         }),
       };
 
+
+const { error: dbError } = await supabase.from('leads').insert([insertData]);
+if (dbError) {
+    console.error("Supabase Error:", dbError);
+    throw dbError; // अगर Supabase में सेव नहीं हुआ, तो यहीं रुक जाएं
+}
+
   // 2. n8n को डेटा भेजें
 try {
   const response = await fetch('https://sandeep-n8n.app.n8n.cloud/webhook/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
