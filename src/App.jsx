@@ -369,12 +369,11 @@ function Home() {
 
   // 2. n8n को डेटा भेजें
 try { 
-
-  const response = await fetch('https://sandeep-n8n.app.n8n.cloud/webhook/62e82f91-9b3c-441e-8462-5e8acc3e8a5f', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(insertData),
-  });
+const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(insertData),
+});
   
   if (!response.ok) {
     console.log("n8n responded with status:", response.status);
