@@ -4,7 +4,7 @@ import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // ============================================
-// SHARED NAVBAR COMPONENT (Fixed & Centered)
+// SHARED NAVBAR COMPONENT
 // ============================================
 function Navbar() {
   return (
@@ -15,17 +15,12 @@ function Navbar() {
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '16px 5%', boxSizing: 'border-box', transition: 'all 0.3s ease'
     }}>
-      {/* Empty Left Space to balance the center */}
       <div style={{ flex: 1 }}></div>
-
-      {/* Centered Logo (SIZE INCREASED HERE) */}
       <Link to="/" style={{ flex: 1, textAlign: 'center', textDecoration: 'none', whiteSpace: 'nowrap' }}>
         <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '5rem', color: '#C9A84C', lineHeight: '1' }}>
           The <span style={{ fontStyle: 'italic' }}>Inner Core</span>
         </div>
       </Link>
-
-      {/* Right Navigation Links */}
       <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
         <ul className="nav-links" style={{ display: 'flex', gap: '24px', margin: 0, padding: 0, listStyle: 'none' }}>
           <li><a href="/#about">About</a></li>
@@ -39,28 +34,31 @@ function Navbar() {
 }
 
 // ============================================
-// BOOKING MODAL COMPONENT (Pop-up Form)
-// BOOKING MODAL COMPONENT (Pop-up Form)
+// BOOKING MODAL COMPONENT
 // ============================================
 function BookingModal({ service, onClose }) {
   const [formData, setFormData] = useState({
-    name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: ''
+    name: '', phone: '', email: '', district: '', state: '', country: '',
+    dob: '', tob: '', pob: '', latitude: '', longitude: ''
   });
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // --- AUTO FILL LOCATION LOGIC ---
+  const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
+  const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
+  const isPobDisabled = formData.latitude !== '' || formData.longitude !== '';
+  const isCoordsDisabled = formData.pob !== '';
+
+  // Auto-fill location from coordinates
   useEffect(() => {
     const fetchLocationData = async () => {
       const lat = formData.latitude;
       const lon = formData.longitude;
-
       if (lat && lon && String(lat).trim() !== '' && String(lon).trim() !== '') {
         try {
           const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
           const data = await response.json();
-
           if (data && data.address) {
             setFormData(prev => ({
               ...prev,
@@ -74,30 +72,16 @@ function BookingModal({ service, onClose }) {
         }
       }
     };
-
-    const delayTimer = setTimeout(() => {
-      fetchLocationData();
-    }, 1000);
-
+    const delayTimer = setTimeout(() => { fetchLocationData(); }, 1000);
     return () => clearTimeout(delayTimer);
   }, [formData.latitude, formData.longitude]);
-
-  // --- LOGIC VARIABLES ---
-  const isVastu = service === 'Residential Vastu' || service === 'Commercial Vastu' || service === 'Astro-Vastu Combined';
-  const isAstro = service === 'KP Astrology Reading' || service === 'Astro-Vastu Combined';
-
-  const isPobDisabled = formData.latitude !== '' || formData.longitude !== '';
-  const isCoordsDisabled = formData.pob !== '';
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setMapFile(e.target.files[0]);
 
-  // --- SUBMIT HANDLER ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isVastu && !mapFile) {
-      alert('Please upload your Floor Plan.'); return;
-    }
+    if (isVastu && !mapFile) { alert('Please upload your Floor Plan.'); return; }
     if (isAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
       alert('Please provide either Place of Birth OR both Latitude & Longitude.'); return;
     }
@@ -115,19 +99,24 @@ function BookingModal({ service, onClose }) {
       }
 
       const insertData = {
-        name: formData.name, phone: formData.phone, email: formData.email,
-        district: formData.district, state: formData.state, country: formData.country,
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        district: formData.district,
+        state: formData.state,
+        country: formData.country,
         service: service,
         ...(fileUrl && { map_url: fileUrl }),
-        ...(isAstro && { 
-          dob: formData.dob || null, 
-          tob: formData.tob || null, 
+        ...(isAstro && {
+          dob: formData.dob || null,
+          tob: formData.tob || null,
           pob: formData.pob || null,
           latitude: formData.latitude || null,
-          longitude: formData.longitude || null
+          longitude: formData.longitude || null,
         }),
       };
 
+      // ✅ Supabase insert
       const { error: dbError } = await supabase.from('leads').insert([insertData]);
       if (dbError) throw dbError;
 
@@ -139,32 +128,27 @@ function BookingModal({ service, onClose }) {
     }
   };
 
-  // --- STYLES ---
   const overlayStyle = {
     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0,0,0,0.85)', zIndex: 10000, 
+    background: 'rgba(0,0,0,0.85)', zIndex: 10000,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: '20px', backdropFilter: 'blur(6px)',
   };
-
   const modalStyle = {
     background: 'rgba(12,12,12,0.97)', border: '1px solid rgba(201,168,76,0.35)',
     borderRadius: '14px', padding: '36px 32px', width: '100%', maxWidth: '460px',
     maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
   };
-
   const inputStyle = {
-    width: '100%', padding: '10px 12px', fontSize: '0.85rem', background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box',
-    transition: 'all 0.3s ease'
+    width: '100%', padding: '10px 12px', fontSize: '0.85rem',
+    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)',
+    borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box',
   };
-
   const labelStyle = {
-    display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '6px',
-    transition: 'all 0.3s ease'
+    display: 'block', fontSize: '0.65rem', letterSpacing: '2px',
+    textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '6px',
   };
 
-  // --- SUCCESS SCREEN ---
   if (isSuccess) {
     return (
       <div style={overlayStyle} onClick={onClose}>
@@ -176,22 +160,23 @@ function BookingModal({ service, onClose }) {
             Aapki booking request mil gayi. Hum jald hi WhatsApp ya email pe sampark karenge.
           </p>
           <button onClick={onClose} style={{
-            background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', padding: '12px 32px',
-            color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.85rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer',
+            background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px',
+            padding: '12px 32px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.85rem',
+            letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer',
           }}>Close</button>
         </div>
       </div>
     );
   }
 
-  // --- FORM SCREEN ---
   return (
     <div style={overlayStyle} onClick={onClose}>
       <div style={modalStyle} onClick={e => e.stopPropagation()}>
-        
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          ✕
-        </button>
+        <button onClick={onClose} style={{
+          position: 'absolute', top: '16px', right: '16px', background: 'none',
+          border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', width: '32px', height: '32px',
+          borderRadius: '50%', cursor: 'pointer', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>✕</button>
 
         <div style={{ fontSize: '0.7rem', letterSpacing: '4px', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '6px', textAlign: 'center' }}>Book Session</div>
         <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: '#f5f0e8', textAlign: 'center', marginBottom: '6px' }}>{service}</h3>
@@ -199,34 +184,32 @@ function BookingModal({ service, onClose }) {
         <div style={{ width: '40px', height: '1px', background: 'rgba(201,168,76,0.4)', margin: '0 auto 24px' }}></div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          
           <div>
             <label style={labelStyle}>Full Name</label>
             <input type="text" name="name" value={formData.name} onChange={handleChange} style={inputStyle} required />
           </div>
-          
+
           {isAstro && (
             <>
               <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}><label style={labelStyle}>Date of Birth</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} style={inputStyle} required={isAstro} /></div>
-                <div style={{ flex: 1 }}><label style={labelStyle}>Time of Birth</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} style={inputStyle} required={isAstro} /></div>
+                <div style={{ flex: 1 }}><label style={labelStyle}>Date of Birth</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} style={inputStyle} required /></div>
+                <div style={{ flex: 1 }}><label style={labelStyle}>Time of Birth</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} style={inputStyle} required /></div>
               </div>
-              
               <div style={{ background: 'rgba(201,168,76,0.03)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(201,168,76,0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
                   <div style={{ flex: 1.5, opacity: isPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                     <label style={labelStyle}>Place of Birth</label>
-                    <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isPobDisabled} placeholder="City, State" style={{ ...inputStyle, cursor: isPobDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isPobDisabled} />
+                    <input type="text" name="pob" value={formData.pob} onChange={handleChange} disabled={isPobDisabled} placeholder="City, State" style={{ ...inputStyle, cursor: isPobDisabled ? 'not-allowed' : 'text' }} required={!isPobDisabled} />
                   </div>
                   <div style={{ paddingBottom: '12px', fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '1px', fontWeight: 'bold' }}>OR</div>
                   <div style={{ flex: 1.5, display: 'flex', gap: '8px', opacity: isCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                     <div style={{ flex: 1 }}>
                       <label style={labelStyle}>Latitude</label>
-                      <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 23.79" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                      <input type="text" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="23.79" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} />
                     </div>
                     <div style={{ flex: 1 }}>
                       <label style={labelStyle}>Longitude</label>
-                      <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="e.g. 86.43" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} required={isAstro && !isCoordsDisabled} />
+                      <input type="text" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isCoordsDisabled} placeholder="86.43" style={{ ...inputStyle, cursor: isCoordsDisabled ? 'not-allowed' : 'text' }} />
                     </div>
                   </div>
                 </div>
@@ -238,11 +221,7 @@ function BookingModal({ service, onClose }) {
             <div style={{ flex: 1 }}><label style={labelStyle}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} style={inputStyle} required /></div>
             <div style={{ flex: 1 }}><label style={labelStyle}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} style={inputStyle} required /></div>
           </div>
-          <div>
-            <label style={labelStyle}>Country</label>
-            <input type="text" name="country" value={formData.country} onChange={handleChange} style={inputStyle} required />
-          </div>
-
+          <div><label style={labelStyle}>Country</label><input type="text" name="country" value={formData.country} onChange={handleChange} style={inputStyle} required /></div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}><label style={labelStyle}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} style={inputStyle} required /></div>
             <div style={{ flex: 1 }}><label style={labelStyle}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} style={inputStyle} required /></div>
@@ -253,15 +232,18 @@ function BookingModal({ service, onClose }) {
               <div style={{ width: '100%', height: '1px', background: 'rgba(201,168,76,0.2)', margin: '4px 0' }}></div>
               <div>
                 <label style={labelStyle}>Upload Floor Plan</label>
-                <input type="file" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" style={{ ...inputStyle, padding: '8px' }} required={isVastu} />
+                <input type="file" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" style={{ ...inputStyle, padding: '8px' }} required />
               </div>
             </>
           )}
 
-          <button type="submit" disabled={isSubmitting} style={{ marginTop: '8px', width: '100%', padding: '13px', background: isSubmitting ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.85rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
-            {isSubmitting ? 'Submitting...' : 'Book Consultation'}
-          </button>
-          
+          <button type="submit" disabled={isSubmitting} style={{
+            marginTop: '8px', width: '100%', padding: '13px',
+            background: isSubmitting ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C, #a07830)',
+            border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold',
+            fontSize: '0.85rem', letterSpacing: '2px', textTransform: 'uppercase',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer',
+          }}>{isSubmitting ? 'Submitting...' : 'Book Consultation'}</button>
         </form>
       </div>
     </div>
@@ -269,39 +251,33 @@ function BookingModal({ service, onClose }) {
 }
 
 // ============================================
-// HOME PAGE COMPONENT (The Main Website)
+// HOME PAGE
 // ============================================
 function Home() {
   const [formData, setFormData] = useState({
-    name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu'
+    name: '', phone: '', email: '', district: '', state: '', country: '',
+    dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu'
   });
   const [mapFile, setMapFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeModal, setActiveModal] = useState(null); 
+  const [activeModal, setActiveModal] = useState(null);
 
   const isHeroVastu = formData.service === 'Residential Vastu' || formData.service === 'Commercial Vastu' || formData.service === 'Astro-Vastu Combined';
   const isHeroAstro = formData.service === 'KP Astrology Reading' || formData.service === 'Astro-Vastu Combined';
-
   const isHeroPobDisabled = formData.latitude !== '' || formData.longitude !== '';
   const isHeroCoordsDisabled = formData.pob !== '';
 
   const openModal = (serviceName) => {
     setActiveModal(serviceName);
-    window.location.hash = 'booking'; 
+    window.location.hash = 'booking';
   };
-
   const closeModal = () => {
-    if (window.location.hash === '#booking') {
-      window.history.back(); 
-    } else {
-      setActiveModal(null);
-    }
+    if (window.location.hash === '#booking') { window.history.back(); }
+    else { setActiveModal(null); }
   };
 
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash !== '#booking') setActiveModal(null);
-    };
+    const handleHashChange = () => { if (window.location.hash !== '#booking') setActiveModal(null); };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
@@ -310,10 +286,7 @@ function Home() {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
       });
     }, { threshold: 0.1 });
     reveals.forEach(el => observer.observe(el));
@@ -328,13 +301,10 @@ function Home() {
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setMapFile(e.target.files[0]);
 
+  // ✅ FIXED handleSubmit — Supabase insert sahi hai, n8n hata diya
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // सुधार 1: isVastu की जगह isHeroVastu और isAstro की जगह isHeroAstro किया गया
-    if (isHeroVastu && !mapFile) {
-      alert('Please upload your Floor Plan.'); return;
-    }
+    if (isHeroVastu && !mapFile) { alert('Please upload your Floor Plan.'); return; }
     if (isHeroAstro && !formData.pob && (!formData.latitude || !formData.longitude)) {
       alert('Please provide either Place of Birth OR both Latitude & Longitude.'); return;
     }
@@ -352,42 +322,35 @@ function Home() {
       }
 
       const insertData = {
-        name: formData.name, phone: formData.phone, email: formData.email,
-        district: formData.district, state: formData.state, country: formData.country,
-        service: formData.service, // सुधार 2: सिर्फ service की जगह formData.service किया गया
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        district: formData.district,
+        state: formData.state,
+        country: formData.country,
+        service: formData.service,
         ...(fileUrl && { map_url: fileUrl }),
-        ...(isHeroAstro && { 
-          dob: formData.dob || null, 
-          tob: formData.tob || null, 
+        ...(isHeroAstro && {
+          dob: formData.dob || null,
+          tob: formData.tob || null,
           pob: formData.pob || null,
           latitude: formData.latitude || null,
-          longitude: formData.longitude || null
+          longitude: formData.longitude || null,
         }),
       };
 
+      // ✅ Supabase mein save karo
+      const { error: dbError } = await supabase.from('leads').insert([insertData]);
+      if (dbError) throw dbError;
 
-
-  // 2. n8n को डेटा भेजें
-try { 
-const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(insertData),
-});
-  
-  if (!response.ok) {
-    console.log("n8n responded with status:", response.status);
-  } else {
-    console.log("Data successfully sent to n8n");
-  }
-} catch (err) {
-  console.error("n8n call failed:", err);
-}
-      // 3. सफलता का मैसेज और फॉर्म रिसेट
-      alert('Aapki request successfully submit ho gayi hai!'); // सुधार 3: setIsSuccess की जगह सीधा Alert लगा दिया 
-      setFormData({ name: '', phone: '', email: '', district: '', state: '', country: '', dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu' });
+      // ✅ Form reset
+      alert('🙏 Om Shanti! Aapki request successfully submit ho gayi. Hum jald sampark karenge.');
+      setFormData({
+        name: '', phone: '', email: '', district: '', state: '', country: '',
+        dob: '', tob: '', pob: '', latitude: '', longitude: '', service: 'Residential Vastu'
+      });
       setMapFile(null);
-      
+
     } catch (error) {
       alert('Error: ' + error.message);
     } finally {
@@ -400,7 +363,6 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
     border: '1px solid rgba(201,168,76,0.5)', borderRadius: '6px', color: '#C9A84C', fontSize: '0.75rem',
     letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.25s', fontWeight: '600',
   };
-
   const inputStyleApp = { padding: '10px 12px', fontSize: '0.85rem', transition: 'all 0.3s ease' };
 
   return (
@@ -419,7 +381,6 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
         </svg>
 
         <div className="hero-content" style={{ flex: '1 1 450px', zIndex: 1, textAlign: 'left', marginTop: '0' }}>
-          
           <h1 className="hero-title"><em>Vastu Samadhan</em></h1>
           <p className="hero-subtitle">Professional Astro-Vastu Consultant</p>
           <div className="hero-divider" style={{ margin: '20px 0' }}></div>
@@ -429,21 +390,17 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
           </div>
         </div>
 
-       {/* HERO FORM */}
+        {/* HERO FORM */}
         <div style={{ flex: '1 1 400px', zIndex: 2, width: '100%', maxWidth: '440px', margin: '0 auto' }}>
           <div style={{ background: 'rgba(12, 12, 12, 0.75)', border: '1px solid rgba(201,168,76,0.3)', padding: '35px 30px', borderRadius: '12px', backdropFilter: 'blur(12px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
-            
-            {/* NEW BOLD HEADER & URGENCY BADGE */}
             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
               <div style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
                 Free Vastu Consultation Form
               </div>
-              
-              <span style={{ backgroundColor: '#cc0000', color: '#ffffff', padding: '6px 15px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '1.5px', textTransform: 'uppercase', boxShadow: '0 4px 10px rgba(204, 0, 0, 0.4)', display: 'inline-block' }}>
+              <span style={{ backgroundColor: '#cc0000', color: '#ffffff', padding: '6px 15px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '1.5px', textTransform: 'uppercase', boxShadow: '0 4px 10px rgba(204,0,0,0.4)', display: 'inline-block' }}>
                 ⏳ For Limited Period Only
               </span>
             </div>
-            {/* END NEW BOLD HEADER */}
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
@@ -454,10 +411,15 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
               {isHeroAstro && (
                 <>
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>DOB</label><input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
-                    <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Time</label><input type="time" name="tob" value={formData.tob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} /></div>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>DOB</label>
+                      <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Time</label>
+                      <input type="time" name="tob" value={formData.tob} onChange={handleChange} className="form-input" style={{ padding: '8px 12px', fontSize: '0.8rem' }} required={isHeroAstro} />
+                    </div>
                   </div>
-                  
                   <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <div style={{ opacity: isHeroPobDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                       <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Place of Birth</label>
@@ -467,11 +429,11 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
                     <div style={{ display: 'flex', gap: '12px', opacity: isHeroCoordsDisabled ? 0.4 : 1, transition: 'all 0.3s' }}>
                       <div style={{ flex: 1 }}>
                         <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Latitude</label>
-                        <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 23.7957" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
+                        <input type="text" name="latitude" value={formData.latitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="23.7957" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} />
                       </div>
                       <div style={{ flex: 1 }}>
                         <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Longitude</label>
-                        <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="e.g. 86.4304" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} required={isHeroAstro && !isHeroCoordsDisabled} />
+                        <input type="text" name="longitude" value={formData.longitude} onChange={handleChange} disabled={isHeroCoordsDisabled} placeholder="86.4304" className="form-input" style={{ ...inputStyleApp, cursor: isHeroCoordsDisabled ? 'not-allowed' : 'text' }} />
                       </div>
                     </div>
                   </div>
@@ -479,18 +441,34 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
               )}
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label><input type="text" name="district" value={formData.district} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label><input type="text" name="state" value={formData.state} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>District</label>
+                  <input type="text" name="district" value={formData.district} onChange={handleChange} className="form-input" style={inputStyleApp} required />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>State</label>
+                  <input type="text" name="state" value={formData.state} onChange={handleChange} className="form-input" style={inputStyleApp} required />
+                </div>
               </div>
-              
-              <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label><input type="text" name="country" value={formData.country} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Country</label>
+                <input type="text" name="country" value={formData.country} onChange={handleChange} className="form-input" style={inputStyleApp} required />
+              </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
-                <div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" style={inputStyleApp} required /></div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Phone</label>
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="form-input" style={inputStyleApp} required />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-input" style={inputStyleApp} required />
+                </div>
               </div>
 
-              <div><label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Service</label>
                 <select name="service" value={formData.service} onChange={handleChange} className="form-input" style={inputStyleApp} required>
                   <option>Residential Vastu</option>
                   <option>Commercial Vastu</option>
@@ -533,47 +511,28 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
               <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '2' }}>KP Astrologer<br/>Vastu Consultant</div>
             </div>
           </div>
-           <div className="about-content reveal" style={{ maxWidth: '650px', margin: '0 auto', textAlign: 'center' }}>
-       <div className="about-content reveal" style={{ maxWidth: '850px', margin: '0 auto', padding: '80px 20px', textAlign: 'left' }}>
-  <div className="about-content reveal">
-  <div className="section-tag" style={{ letterSpacing: '6px', marginBottom: '15px' }}>About</div>
-  
-  <div className="gold-divider" style={{ margin: '0 0 30px 0', width: '60px', height: '2px', background: 'var(--gold)' }}></div>
-  
-  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px' }}>
-    I am Sandeep Kumar — A Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.
-  </p>
-  
-  <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8' }}>
-    I rely on KP Astrology logic and classical Vastu principles, backed by observable data—never on superstition. I believe in results that you can measure and feel.
-   </p>
-   </div>
-  </div>
- </div>
-
-     <section className="transparency-section" style={{ padding: '80px 20px', textAlign: 'center' }}>
-  <div style={{ maxWidth: '850px', margin: '0 auto' }}> {/* Width 600px से 850px की */}
-    
-    <div style={{ fontSize: '0.9rem', letterSpacing: '8px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '30px', fontWeight: '600' }}>
-      Honest Disclosure
-    </div>
-    
-    <div style={{ 
-      fontFamily: "'Cormorant Garamond', serif", 
-      fontSize: '1.5rem', // फॉन्ट साइज 1.1rem से बढ़ाकर 1.5rem किया
-      color: 'rgba(245, 240, 232, 0.9)', 
-      fontStyle: 'italic', 
-      lineHeight: '1.6',
-      borderTop: '1px solid rgba(201, 168, 76, 0.3)',
-      borderBottom: '1px solid rgba(201, 168, 76, 0.3)',
-      padding: '30px 0'
-    }}>
-      "I put 100% effort into my analysis, but practically, my Astro-Vastu remedies will deliver 70% of the result. The remaining 30% to achieve the full 100% outcome depends entirely on your <em>Prarabdha Karma</em>."
-    </div>
-  </div>
-</section>
-     
+          <div className="about-content reveal">
+            <div className="section-tag" style={{ letterSpacing: '6px', marginBottom: '15px' }}>About</div>
+            <div className="gold-divider" style={{ margin: '0 0 30px 0', width: '60px', height: '2px', background: 'var(--gold)' }}></div>
+            <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8', marginBottom: '25px' }}>
+              I am Sandeep Kumar — A Professional Astro-Vastu Consultant. My work bridges the gap between ancient Indian sciences and the modern, logical mind.
+            </p>
+            <p className="about-text" style={{ fontSize: '1.15rem', lineHeight: '1.8' }}>
+              I rely on KP Astrology logic and classical Vastu principles, backed by observable data—never on superstition. I believe in results that you can measure and feel.
+            </p>
+          </div>
         </div>
+
+        <section className="transparency-section" style={{ padding: '80px 20px', textAlign: 'center' }}>
+          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+            <div style={{ fontSize: '0.9rem', letterSpacing: '8px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '30px', fontWeight: '600' }}>
+              Honest Disclosure
+            </div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: 'rgba(245,240,232,0.9)', fontStyle: 'italic', lineHeight: '1.6', borderTop: '1px solid rgba(201,168,76,0.3)', borderBottom: '1px solid rgba(201,168,76,0.3)', padding: '30px 0' }}>
+              "I put 100% effort into my analysis, but practically, my Astro-Vastu remedies will deliver 70% of the result. The remaining 30% to achieve the full 100% outcome depends entirely on your <em>Prarabdha Karma</em>."
+            </div>
+          </div>
+        </section>
       </section>
 
       <section id="approach">
@@ -597,7 +556,7 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
         </div>
       </section>
 
-     {/* <section className="services" id="services">
+      <section className="services" id="services">
         <div className="services-header reveal">
           <div className="section-tag">Services</div>
           <h2 className="section-title">How I Can <em>Help You</em></h2>
@@ -610,11 +569,11 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
             <ul className="service-points">
               <li>Home Vastu Analysis</li><li>Office & Business Vastu</li><li>Plot & Construction Guidance</li><li>Directional Energy Mapping</li><li>Practical Remedies — No Major Demolition</li>
             </ul>
-            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => openModal('Residential Vastu')}>
-              Book Session →
-            </button>
+            <button style={bookBtnStyle}
+              onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }}
+              onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }}
+              onClick={() => openModal('Residential Vastu')}>Book Session →</button>
           </div>
-
           <div className="service-card reveal">
             <span className="service-icon">🔮</span>
             <div className="service-title">KP Astrology Reading</div>
@@ -622,11 +581,11 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
             <ul className="service-points">
               <li>Birth Chart Analysis</li><li>Event Timing & Prediction</li><li>Career & Business Guidance</li><li>Relationship & Family Analysis</li><li>Muhurat Selection</li>
             </ul>
-            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => openModal('KP Astrology Reading')}>
-              Book Session →
-            </button>
+            <button style={bookBtnStyle}
+              onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }}
+              onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }}
+              onClick={() => openModal('KP Astrology Reading')}>Book Session →</button>
           </div>
-
           <div className="service-card reveal">
             <span className="service-icon">✨</span>
             <div className="service-title">Astro-Vastu Combined</div>
@@ -634,56 +593,46 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
             <ul className="service-points">
               <li>Chart + Space Correlation</li><li>Personalized Remedies</li><li>Timing-Based Action Plan</li><li>Follow-up Support</li>
             </ul>
-            <button style={bookBtnStyle} onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }} onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }} onClick={() => openModal('Astro-Vastu Combined')}>
-              Book Session →
-            </button>
+            <button style={bookBtnStyle}
+              onMouseEnter={e => { e.target.style.background = 'rgba(201,168,76,0.12)'; e.target.style.borderColor = '#C9A84C'; }}
+              onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'rgba(201,168,76,0.5)'; }}
+              onClick={() => openModal('Astro-Vastu Combined')}>Book Session →</button>
+          </div>
+          <div className="service-card reveal">
+            <span className="service-icon">📱</span>
+            <div className="service-title">Online Consultation</div>
+            <p className="service-desc">Distance is not a barrier. Get a full consultation via WhatsApp or video call — with detailed analysis shared digitally for your reference anytime.</p>
+            <ul className="service-points">
+              <li>WhatsApp Consultation</li><li>Video Call Analysis</li><li>Written Report Provided</li><li>Available Pan India</li>
+            </ul>
+            <a href="https://wa.me/91XXXXXXXXXX" style={{ ...bookBtnStyle, textDecoration: 'none', textAlign: 'center', display: 'block' }}>WhatsApp Now →</a>
           </div>
         </div>
-      </section> */}
+      </section>
 
-      
-<section className="contact" id="contact">
-  <div className="contact-inner">
-    {/* REFINED HEADER */}
-    
-    <h2 className="section-title reveal">Before You <em>Consult</em></h2>
-    <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
-    
-    <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
-      <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
-      
-      {/* REFINED GUIDELINES TAG */}
-      <div style={{ fontSize: '0.85rem', letterSpacing: '5px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '20px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span style={{ fontSize: '1rem' }}>📐</span> Guidelines
-      </div>
-      
-      {/* MAIN HIGHLIGHT QUOTE */}
-      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
-      "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
-      </div>
-      
-      <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
-    
-      <p style={{ color: 'rgba(245, 240, 232, 0.8)', lineHeight: '1.7', fontSize: '1rem' }}>
-    परामर्श (Consultation) से पहले अपना Floor Plan किसी Draftsman या Architect  से ही तैयार करवाएं। 
-    हाथ से बनाया हुआ नक्शा—चाहे कितना भी साफ़ क्यों न हो—अधूरा होता है। वास्तु शास्त्र में प्लॉट, घर की लंबाई-चौड़ाई 
-    और सटीक दिशाओं (Exact Dimensions) का बहुत महत्व है, इसलिए एक 'To-Scale' नक्शा ही मेरे सटीक विश्लेषण का आधार बनता है।
-  </p>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Draftsman / Architect का To-Scale नक्शा — 100% सही
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> North Direction (उत्तर दिशा) Clearly Marked होनी चाहिए
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✓</span> Underground/Overhead Water Tank, Septic Tank, और Borewell ज़रूर Mark करें
-        </div>
-      </div>
-    </div>
-  
-
+      <section className="contact" id="contact">
+        <div className="contact-inner">
+          <h2 className="section-title reveal">Before You <em>Consult</em></h2>
+          <div className="gold-divider" style={{ margin: '20px auto 32px' }}></div>
+          <div className="reveal" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', padding: '36px 40px', marginBottom: '48px', textAlign: 'left', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: '-1px', left: '40px', right: '40px', height: '2px', background: 'linear-gradient(90deg,transparent,var(--gold),transparent)' }}></div>
+            <div style={{ fontSize: '0.85rem', letterSpacing: '5px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '20px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span>📐</span> Guidelines
+            </div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', color: 'var(--cream)', marginBottom: '16px', fontStyle: 'italic', lineHeight: '1.5' }}>
+              "आपके घर का 'To-Scale' (सटीक) नक्शा होना बेहद ज़रूरी है, ताकि आपकी लाइफ की समस्याओं की जड़ (Root Cause) पकड़ने में कोई चूक न हो और आपको 100% सही समाधान मिले।"
+            </div>
+            <div style={{ width: '40px', height: '1px', background: 'var(--gold)', marginBottom: '20px' }}></div>
+            <p style={{ color: 'rgba(245,240,232,0.8)', lineHeight: '1.7', fontSize: '1rem' }}>
+              परामर्श (Consultation) से पहले अपना Floor Plan किसी Draftsman या Architect से ही तैयार करवाएं।
+              हाथ से बनाया हुआ नक्शा—चाहे कितना भी साफ़ क्यों न हो—अधूरा होता है।
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--gold)' }}>✓</span> Draftsman / Architect का To-Scale नक्शा — 100% सही</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--gold)' }}>✓</span> North Direction (उत्तर दिशा) Clearly Marked होनी चाहिए</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--gold)' }}>✓</span> Underground/Overhead Water Tank, Septic Tank, और Borewell ज़रूर Mark करें</div>
+            </div>
+          </div>
 
           <div className="contact-options reveal">
             <a href="https://wa.me/91XXXXXXXXXX" className="contact-card">
@@ -696,13 +645,11 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
               <div className="contact-card-label">Location</div>
               <div className="contact-card-value">Dhanbad, JH</div>
             </a>
-           <a href="https://instagram.com/astrovastusandeep" className="contact-card" target="_blank" rel="noreferrer">
-           <span className="contact-card-icon">
-           <FaInstagram size={28} style={{ color: 'var(--gold)', marginBottom: '10px' }} />
-           </span>
-           <div className="contact-card-label">Instagram</div>
-           <div className="contact-card-value">@astrovastusandeep</div>
-          </a>
+            <a href="https://instagram.com/astrovastusandeep" className="contact-card" target="_blank" rel="noreferrer">
+              <span className="contact-card-icon"><FaInstagram size={28} style={{ color: 'var(--gold)', marginBottom: '10px' }} /></span>
+              <div className="contact-card-label">Instagram</div>
+              <div className="contact-card-value">@astrovastusandeep</div>
+            </a>
           </div>
         </div>
       </section>
@@ -715,8 +662,9 @@ const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
     </>
   );
 }
+
 // ============================================
-// ADMIN PANEL COMPONENT (Password Protected + Image Upload)
+// ADMIN PANEL
 // ============================================
 function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -728,11 +676,8 @@ function AdminPanel() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === 'Sandeep@InnerCore') {
-      setIsAuthenticated(true);
-    } else {
-      alert('Incorrect Secret Password!');
-    }
+    if (password === 'Sandeep@InnerCore') { setIsAuthenticated(true); }
+    else { alert('Incorrect Secret Password!'); }
   };
 
   const handlePublish = async (e) => {
@@ -740,27 +685,19 @@ function AdminPanel() {
     setIsSubmitting(true);
     try {
       let imageUrl = null;
-
       if (blogImage) {
         const fileExt = blogImage.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage.from('blog_images').upload(fileName, blogImage);
         if (uploadError) throw uploadError;
-        
         const { data } = supabase.storage.from('blog_images').getPublicUrl(fileName);
         imageUrl = data.publicUrl;
       }
-
-      const { error } = await supabase.from('blogs').insert([
-        { title: blogTitle, content: blogContent, image_url: imageUrl }
-      ]);
+      const { error } = await supabase.from('blogs').insert([{ title: blogTitle, content: blogContent, image_url: imageUrl }]);
       if (error) throw error;
-      
       alert('Blog Published Successfully! 🎉');
-      setBlogTitle('');
-      setBlogContent('');
-      setBlogImage(null);
-      e.target.reset(); 
+      setBlogTitle(''); setBlogContent(''); setBlogImage(null);
+      e.target.reset();
     } catch (error) {
       alert('Error: ' + error.message);
     } finally {
@@ -775,14 +712,8 @@ function AdminPanel() {
           <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🔒</div>
           <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.8rem', color: '#f5f0e8', marginBottom: '24px' }}>Admin Access</h3>
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <input 
-              type="password" 
-              placeholder="Enter Secret Password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)}
-              style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', textAlign: 'center', boxSizing: 'border-box' }} 
-              required 
-            />
+            <input type="password" placeholder="Enter Secret Password" value={password} onChange={(e) => setPassword(e.target.value)}
+              style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', textAlign: 'center', boxSizing: 'border-box' }} required />
             <button type="submit" style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase', fontSize: '0.8rem' }}>
               Unlock Dashboard
             </button>
@@ -803,25 +734,22 @@ function AdminPanel() {
           <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', color: '#C9A84C' }}>Control Panel</h2>
           <button onClick={() => setIsAuthenticated(false)} style={{ background: 'none', border: '1px solid rgba(231,76,60,0.5)', color: '#e74c3c', padding: '6px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Logout</button>
         </div>
-        
         <form onSubmit={handlePublish} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(255,255,255,0.02)', padding: '30px', borderRadius: '12px', border: '1px solid rgba(201,168,76,0.1)' }}>
           <h3 style={{ fontSize: '1.1rem', color: '#C9A84C', letterSpacing: '1px', textTransform: 'uppercase' }}>Compose Article</h3>
-          
           <div>
             <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Cover Image (Optional)</label>
             <input type="file" accept="image/*" onChange={(e) => setBlogImage(e.target.files[0])} style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} />
           </div>
-
           <div>
             <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Blog Title</label>
-            <input type="text" value={blogTitle} onChange={(e) => setBlogTitle(e.target.value)} placeholder="e.g., The Science Behind 16 Vastu Zones" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} required />
+            <input type="text" value={blogTitle} onChange={(e) => setBlogTitle(e.target.value)} placeholder="e.g., The Science Behind 16 Vastu Zones"
+              style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', boxSizing: 'border-box' }} required />
           </div>
-
           <div>
             <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(245,240,232,0.5)', marginBottom: '8px' }}>Content Body</label>
-            <textarea value={blogContent} onChange={(e) => setBlogContent(e.target.value)} placeholder="Write your text here..." rows="12" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', fontFamily: 'inherit', lineHeight: '1.6', boxSizing: 'border-box' }} required></textarea>
+            <textarea value={blogContent} onChange={(e) => setBlogContent(e.target.value)} placeholder="Write your text here..." rows="12"
+              style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '6px', color: '#f5f0e8', outline: 'none', fontFamily: 'inherit', lineHeight: '1.6', boxSizing: 'border-box' }} required></textarea>
           </div>
-
           <button type="submit" disabled={isSubmitting} style={{ padding: '14px', background: 'linear-gradient(135deg, #C9A84C, #a07830)', border: 'none', borderRadius: '6px', color: '#0c0c0c', fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}>
             {isSubmitting ? 'Publishing...' : 'Publish Article'}
           </button>
@@ -832,7 +760,7 @@ function AdminPanel() {
 }
 
 // ============================================
-// BLOG PAGE COMPONENT (Fetches dynamically)
+// BLOG PAGE
 // ============================================
 function BlogPage() {
   const [posts, setPosts] = useState([]);
@@ -862,7 +790,6 @@ function BlogPage() {
           <p style={{ color: 'rgba(245,240,232,0.6)', fontSize: '0.95rem' }}>Ancient Wisdom + Modern Logic Written Daily & Monthly</p>
           <div style={{ width: '60px', height: '1px', background: 'rgba(201,168,76,0.4)', margin: '20px auto 0' }}></div>
         </div>
-
         {loading ? (
           <p style={{ textAlign: 'center', color: 'rgba(245,240,232,0.5)' }}>Loading journal entries...</p>
         ) : posts.length === 0 ? (
@@ -885,7 +812,6 @@ function BlogPage() {
             ))}
           </div>
         )}
-
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
           <Link to="/" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid #C9A84C', paddingBottom: '4px', fontSize: '0.9rem' }}>← Back to Home</Link>
         </div>
@@ -895,7 +821,7 @@ function BlogPage() {
 }
 
 // ============================================
-// ROUTING CONFIGURATION
+// ROUTING
 // ============================================
 export default function App() {
   return (
