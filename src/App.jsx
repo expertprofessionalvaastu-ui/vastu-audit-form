@@ -4,6 +4,64 @@ import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // ============================================
+// CONFIG
+// ============================================
+const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/nu6hkqy5smyw7draxh2796kyqbemw4r9';
+// TODO: replace with your real WhatsApp business number in international format (no + or spaces)
+const WHATSAPP_NUMBER = '91XXXXXXXXXX';
+
+// ============================================
+// SHARED LEAD SUBMISSION LOGIC
+// (Used by BOTH the hero form and the modal booking form,
+//  so a fix here now applies everywhere — no more duplicate/missed logic)
+// ============================================
+async function uploadFloorPlan(mapFile) {
+  const fileExt = mapFile.name.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const { error: uploadError } = await supabase.storage.from('house_maps').upload(fileName, mapFile);
+  if (uploadError) throw uploadError;
+  const { data: publicUrlData } = supabase.storage.from('house_maps').getPublicUrl(fileName);
+  return publicUrlData.publicUrl;
+}
+
+async function submitLead(insertData, mapFile) {
+  let fileUrl = null;
+  if (mapFile) {
+    fileUrl = await uploadFloorPlan(mapFile);
+  }
+
+  const finalData = {
+    ...insertData,
+    ...(fileUrl && { map_url: fileUrl }),
+  };
+
+  // 1) Save to Supabase — this is the source of truth
+  const { error: dbError } = await supabase.from('leads').insert([finalData]);
+  if (dbError) throw dbError;
+
+  // 2) Forward to Make.com webhook (best-effort — never blocks the user's success message,
+  //    but now actually logs a visible warning if Make rejects/fails, instead of failing silently)
+  try {
+    console.log('MAKE WEBHOOK STARTING');
+    const webhookResponse = await fetch(MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...finalData, floor_plan_url: fileUrl }),
+    });
+
+    if (!webhookResponse.ok) {
+      console.error('MAKE WEBHOOK REJECTED — status:', webhookResponse.status);
+    } else {
+      console.log('MAKE WEBHOOK SENT SUCCESSFULLY — status:', webhookResponse.status);
+    }
+  } catch (webhookError) {
+    console.error('MAKE WEBHOOK ERROR:', webhookError);
+  }
+
+  return fileUrl;
+}
+
+// ============================================
 // SHARED NAVBAR COMPONENT
 // ============================================
 function Navbar() {
@@ -88,16 +146,6 @@ function BookingModal({ service, onClose }) {
 
     setIsSubmitting(true);
     try {
-      let fileUrl = null;
-      if (isVastu && mapFile) {
-        const fileExt = mapFile.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from('house_maps').upload(fileName, mapFile);
-        if (uploadError) throw uploadError;
-        const { data: publicUrlData } = supabase.storage.from('house_maps').getPublicUrl(fileName);
-        fileUrl = publicUrlData.publicUrl;
-      }
-
       const insertData = {
         name: formData.name,
         phone: formData.phone,
@@ -106,7 +154,6 @@ function BookingModal({ service, onClose }) {
         state: formData.state,
         country: formData.country,
         service: service,
-        ...(fileUrl && { map_url: fileUrl }),
         ...(isAstro && {
           dob: formData.dob || null,
           tob: formData.tob || null,
@@ -116,35 +163,7 @@ function BookingModal({ service, onClose }) {
         }),
       };
 
-      // ✅ Supabase insert
-      const { error: dbError } = await supabase.from('leads').insert([insertData]);
-      if (dbError) throw dbError;
-
-     
-console.log("MAKE WEBHOOK STARTING");
-
-try {
-  const webhookResponse = await fetch(
-    'https://hook.eu1.make.com/nu6hkqy5smyw7draxh2796kyqbemw4r9',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...insertData,
-        floor_plan_url: fileUrl,
-      }),
-    }
-  );
-
-  console.log("MAKE STATUS:", webhookResponse.status);
-  console.log("MAKE WEBHOOK SENT");
-
-} catch (webhookError) {
-  console.error("MAKE WEBHOOK ERROR:", webhookError);
-}
-
+      await submitLead(insertData, mapFile);
       setIsSuccess(true);
     } catch (error) {
       alert('Error: ' + error.message);
@@ -326,7 +345,10 @@ function Home() {
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setMapFile(e.target.files[0]);
 
-  // ✅ FIXED handleSubmit — Supabase insert sahi hai, n8n hata diya
+  // ✅ FIXED — hero form now goes through the SAME submitLead() helper as the
+  // modal, so it saves to Supabase AND forwards to the Make webhook (the
+  // webhook call was previously missing here — this was the root cause of
+  // leads not reaching Make when submitted from the homepage form).
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isHeroVastu && !mapFile) { alert('Please upload your Floor Plan.'); return; }
@@ -336,16 +358,6 @@ function Home() {
 
     setIsSubmitting(true);
     try {
-      let fileUrl = null;
-      if (isHeroVastu && mapFile) {
-        const fileExt = mapFile.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from('house_maps').upload(fileName, mapFile);
-        if (uploadError) throw uploadError;
-        const { data: publicUrlData } = supabase.storage.from('house_maps').getPublicUrl(fileName);
-        fileUrl = publicUrlData.publicUrl;
-      }
-
       const insertData = {
         name: formData.name,
         phone: formData.phone,
@@ -354,7 +366,6 @@ function Home() {
         state: formData.state,
         country: formData.country,
         service: formData.service,
-        ...(fileUrl && { map_url: fileUrl }),
         ...(isHeroAstro && {
           dob: formData.dob || null,
           tob: formData.tob || null,
@@ -364,11 +375,8 @@ function Home() {
         }),
       };
 
-      // ✅ Supabase mein save karo
-      const { error: dbError } = await supabase.from('leads').insert([insertData]);
-      if (dbError) throw dbError;
+      await submitLead(insertData, mapFile);
 
-      // ✅ Form reset
       alert('🙏 Om Shanti! Aapki request successfully submit ho gayi. Hum jald sampark karenge.');
       setFormData({
         name: '', phone: '', email: '', district: '', state: '', country: '',
@@ -630,7 +638,7 @@ function Home() {
             <ul className="service-points">
               <li>WhatsApp Consultation</li><li>Video Call Analysis</li><li>Written Report Provided</li><li>Available Pan India</li>
             </ul>
-            <a href="https://wa.me/91XXXXXXXXXX" style={{ ...bookBtnStyle, textDecoration: 'none', textAlign: 'center', display: 'block' }}>WhatsApp Now →</a>
+            <a href={`https://wa.me/${WHATSAPP_NUMBER}`} style={{ ...bookBtnStyle, textDecoration: 'none', textAlign: 'center', display: 'block' }}>WhatsApp Now →</a>
           </div>
         </div>
       </section>
@@ -660,7 +668,7 @@ function Home() {
           </div>
 
           <div className="contact-options reveal">
-            <a href="https://wa.me/91XXXXXXXXXX" className="contact-card">
+            <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="contact-card">
               <span className="contact-card-icon">💬</span>
               <div className="contact-card-label">WhatsApp</div>
               <div className="contact-card-value">DM Now</div>
@@ -701,6 +709,11 @@ function AdminPanel() {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    // NOTE: this is a client-side-only gate (kept as-is from the original code).
+    // It is fine for keeping casual visitors out of /admin, but anyone who opens
+    // browser dev tools can read this password directly from the JS bundle.
+    // For real protection, this should move to a Supabase Auth login or a
+    // server-side check instead — happy to build that separately if you want it.
     if (password === 'Sandeep@InnerCore') { setIsAuthenticated(true); }
     else { alert('Incorrect Secret Password!'); }
   };
@@ -721,7 +734,7 @@ function AdminPanel() {
       const { error } = await supabase.from('blogs').insert([{ title: blogTitle, content: blogContent, image_url: imageUrl }]);
       if (error) throw error;
       alert('Blog Published Successfully! 🎉');
-      
+
       setBlogTitle(''); setBlogContent(''); setBlogImage(null);
       e.target.reset();
     } catch (error) {
