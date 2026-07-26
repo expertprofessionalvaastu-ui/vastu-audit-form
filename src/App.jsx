@@ -120,6 +120,19 @@ function BookingModal({ service, onClose }) {
       const { error: dbError } = await supabase.from('leads').insert([insertData]);
       if (dbError) throw dbError;
 
+      // webhook  automation
+    // 🚀 Send consultation data to Make Webhook
+await fetch('https://hook.eu1.make.com/nu6hkqy5smyw7draxh2796kyqbemw4r9', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    ...insertData,
+    floor_plan_url: fileUrl,
+  }),
+});
+
       setIsSuccess(true);
     } catch (error) {
       alert('Error: ' + error.message);
@@ -696,6 +709,7 @@ function AdminPanel() {
       const { error } = await supabase.from('blogs').insert([{ title: blogTitle, content: blogContent, image_url: imageUrl }]);
       if (error) throw error;
       alert('Blog Published Successfully! 🎉');
+      
       setBlogTitle(''); setBlogContent(''); setBlogImage(null);
       e.target.reset();
     } catch (error) {
