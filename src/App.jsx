@@ -121,24 +121,29 @@ function BookingModal({ service, onClose }) {
       if (dbError) throw dbError;
 
      
-// webhook automation
-// 🚀 Send consultation data to Make Webhook
 console.log("MAKE WEBHOOK STARTING");
 
-await fetch('https://hook.eu1.make.com/nu6hkqy5smyw7draxh2796kyqbemw4r9', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    ...insertData,
-    floor_plan_url: fileUrl,
-  }),
-});
+try {
+  const webhookResponse = await fetch(
+    'https://hook.eu1.make.com/nu6hkqy5smyw7draxh2796kyqbemw4r9',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...insertData,
+        floor_plan_url: fileUrl,
+      }),
+    }
+  );
 
-console.log("MAKE WEBHOOK SENT");
+  console.log("MAKE STATUS:", webhookResponse.status);
+  console.log("MAKE WEBHOOK SENT");
 
-
+} catch (webhookError) {
+  console.error("MAKE WEBHOOK ERROR:", webhookError);
+}
 
       setIsSuccess(true);
     } catch (error) {
